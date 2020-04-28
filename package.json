@@ -1,0 +1,10 @@
+{
+    "name": "hezekiah-bot",
+    "version": "1.0.0",
+    "description": "Bot for use of Tehillah in an Old Testament Workshop on Hezekiah",
+    "main": "bot.js",
+    "author": "Justin Au",
+    "dependencies": {
+        "discord.js": "^12.2.0"
+    }
+}
