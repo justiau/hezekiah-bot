@@ -6,7 +6,6 @@ var start_1 = require('./data/1-start.json')
 var a_1 = require('./data/1-a.json')
 
 let dicts = [start_1,a_1];
-// let states = createStates(dicts)
 
 function createStates(dicts) {
 	let states = {}
@@ -27,9 +26,19 @@ var fsmFactory = StateMachine.factory({
 	data: function(channel) {
 		return {
 			sendEmbedState: function(text,title,fields) { util.sendEmbed(text,channel,title,fields) },
+			toString: function() {
+				return JSON.stringify({
+					"state": this.state,
+					"budget": this.budget,
+					"items": this.items,
+					"transitions": this.transitions()
+				})
+			},
 			channel: channel,
 			choices: {},
-			states: createStates(dicts)
+			states: createStates(dicts),
+			budget: 0,
+			items: [],
 		}
 	},
 	methods: {

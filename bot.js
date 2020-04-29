@@ -1,9 +1,7 @@
 const Discord = require('discord.js');
-const auth = require('./auth.json');
-// const start_1 = require('./1-start.json');
 const client = new Discord.Client();
 
-// var StateMachine = require('javascript-state-machine');
+const auth = require('./auth.json');
 
 var util = require('./util');
 var scrape = require('./scrape');
@@ -35,19 +33,7 @@ function handleAdmin(message) {
             sendEmbed(startStr,message.channel)
             message.guild.channels.cache.forEach(channel => {
                 if (channel.type !== "text") return;
-                var props = {
-                    budget: 0,
-                    items : [],
-                    machine: new FSM(channel),
-                    toString : function() {
-                        return JSON.stringify({
-                            budget: this.budget,
-                            items: this.items,
-                            state: this.machine.state
-                        })
-                    }
-                };
-                channels[channel.id] = props;
+                channels[channel.id] = new FSM(channel);
             })
             break;
         case 'show':
@@ -141,22 +127,22 @@ async function handleUser(message) {
         case 'choose':
             if (args.length < 2) {
                 sendEmbed('User did not specify an option to choose.', message.channel, title);
-                sendReturnMessage(cState.machine.states[cState.machine.state], message.channel);
+                sendReturnMessage(cState.states[cState.state], message.channel);
                 return;
             }
-            let choice = cState.machine.choices[args[1]];
+            let choice = cState.choices[args[1]];
             if (choice == undefined) {
                 sendEmbed('Provided command was not in list of options.', message.channel);
-                sendReturnMessage(cState.machine.states[cState.machine.state], message.channel);
+                sendReturnMessage(cState.states[cState.state], message.channel);
                 return;
             }
             let fnName = choice.transition;
-            if (typeof (cState.machine[fnName]) !== "function") {
-                sendEmbed('Transition \"' + fnName + '\" is undefined in state \"' + cState.machine.state + "\"");
-                sendReturnMessage(cState.machine.states[cState.machine.state], message.channel);
+            if (typeof (cState[fnName]) !== "function") {
+                sendEmbed('Transition \"' + fnName + '\" is undefined in state \"' + cState.state + "\"", message.channel);
+                sendReturnMessage(cState.states[cState.state], message.channel);
                 return;
             }
-            cState.machine[fnName]()
+            cState[fnName]()
             break;
         }
 }
