@@ -25,7 +25,6 @@ var fsmFactory = StateMachine.factory({
 	],
 	data: function(channel) {
 		return {
-			sendEmbedState: function(text,title,fields) { util.sendEmbed(text,channel,title,fields) },
 			toString: function() {
 				return JSON.stringify({
 					"state": this.state,
@@ -49,10 +48,11 @@ var fsmFactory = StateMachine.factory({
 				util.sendReturnEmbed(stateDict, this.channel)
 			}
 		},
-		onLeaveState: function(lifecycle) {
+		onLeaveState: async function(lifecycle) {
 			let stateDict = this.states[this.state];
 			if (stateDict !== undefined) {
-				this.sendEmbedState(stateDict.transitions[lifecycle.transition])
+				util.sendEmbed(stateDict.transitions[lifecycle.transition],this.channel);
+				await util.sleep(util.sleepDur);
 			}
 		},
 		onTransition: function() {

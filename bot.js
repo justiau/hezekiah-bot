@@ -123,7 +123,7 @@ async function handleUser(message) {
             }
             break;
         case 'budget':
-            sendEmbed('', message.channel, false, [{name: 'Current Budget', value:cState.budget}]); break;
+            sendEmbed('', message.channel, false, [{name: 'Current Budget', value:"$" + cState.budget}]); break;
         case 'choose':
             if (args.length < 2) {
                 sendEmbed('User did not specify an option to choose.', message.channel, title);

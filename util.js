@@ -1,4 +1,5 @@
-const Discord = require('discord.js')
+const Discord = require('discord.js');
+const sleepDur = 4000;
 
 function sendEmbed(text, channel, title, fields) {
     const embed = new Discord.MessageEmbed()
@@ -10,8 +11,9 @@ function sendEmbed(text, channel, title, fields) {
     channel.send(embed);
 }
 
-function sendReturnEmbed(stateDict, channel) {
+async function sendReturnEmbed(stateDict, channel) {
     sendEmbed(stateDict.onEntry, channel);
+    await sleep(sleepDur);
     let fields = []
     for (var choiceKey in stateDict.choices) {
         fields.push({"name":choiceKey,"value":stateDict.choices[choiceKey].description})
@@ -19,5 +21,15 @@ function sendReturnEmbed(stateDict, channel) {
     sendEmbed("Please choose an option below.\nFor example, to choose __Option A__ please type: `!choose a`",channel,"",fields)
 }
 
-module.exports.sendEmbed = sendEmbed;
-module.exports.sendReturnEmbed = sendReturnEmbed;
+function sleep(ms) {
+    return new Promise((resolve) => {
+        setTimeout(resolve, ms);
+    });
+}   
+
+module.exports = {
+    sendEmbed: sendEmbed,
+    sendReturnEmbed: sendReturnEmbed,
+    sleep: sleep,
+    sleepDur: sleepDur
+}
