@@ -1,11 +1,11 @@
 const Discord = require('discord.js');
-const sleepDur = 4000;
+const sleepDur = 0;
 
 function sendEmbed(text, channel, title, fields) {
     const embed = new Discord.MessageEmbed()
         .setColor('#3794be')
         .setDescription(text)
-        .setFooter('- HezekiahMAN')
+        .setFooter('Made for Tehillah OTW - Hezekiah, 2020')
     if (title && title != "") embed.setTitle(title);
     if (fields) embed.addFields(fields);
     channel.send(embed);

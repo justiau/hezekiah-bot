@@ -15,6 +15,15 @@ const channels = {}
 // id is for mr swaglord22
 const adminID = '229426575731326976';
 
+const userCommands = {
+    "ping": "Ping the bot. Usage: `!ping`",
+    "buy": "Buy an item from Amazon.\nSample Usage: `!buy https://www.amazon.com.au/Estwing-E3-16S-Handle-Ripping-Hammer/dp/B0000224VG/ref=sr_1_1?keywords=hammer&qid=1588074468&sr=8-1`.\nNote that you are only permitted to purchase items from amazon.com or amazon.com.au.",
+    "choose": "Select an option to proceed with. \nSample usage: `!choose a` chooses option a",
+    "items": "Lists the items that Hector currently possesses.\nUsage: `!items`",
+    "budget": "Displays the current amount of money that Hector has.\n Usage: `!budget`",
+    "help": "Displays list of user commands. \n Usage: `!help`"
+}
+
 client.on('ready', () => {
     console.log(`Logged in as ${client.user.tag}!`);
 });
@@ -64,16 +73,16 @@ async function handleUser(message) {
             break;
         case 'buy':
             if (args.length < 2) {
-                let title = "__Purchase Failed__";
+                let title = "Purchase Failed";
                 sendEmbed('User did not specify an Amazon product to purchase.', message.channel, title); return;
             }
             let item = await scrape.getItem(args[1]);
             if (item.error) {
-                let title = "__Purchase Failed__";
+                let title = "Purchase Failed";
                 sendEmbed("The provided URL is not recognised as on www.amazon.com.au or www.amazon.com. Please try another one.", message.channel, title); return;
             }
             if (isNaN(item.price)) {
-                let title = "__Purchase Failed__";
+                let title = "Purchase Failed";
                 let fields = [{ name: "Current Budget", value: "$"+cState.budget }];
                 sendEmbed("Sorry, the price could not be calculated for this URL. Please try another one.", message.channel, title, fields); return;
             }
@@ -81,7 +90,7 @@ async function handleUser(message) {
                 let origBudget = cState.budget;
                 cState.budget = Math.round((cState.budget - item.price + Number.EPSILON) * 100) / 100;
                 cState.items.push(item);
-                let title = "__Purchase Successful__";
+                let title = "Purchase Successful";
                 let fields = [
                     { name: "Title", value: item.title },
                     { name: "Price", value: "$" + item.price.toFixed(2) },
@@ -90,7 +99,7 @@ async function handleUser(message) {
                 ]
                 sendEmbed("You have purchased " + item.title + " for $" + item.price.toFixed(2) + ".", message.channel, title, fields);
             } else {
-                let title = "__Purchase Failed__";
+                let title = "Purchase Failed";
                 let fields = [
                     { name: "Item Cost", value: "$" + item.price.toFixed(2) },
                     { name: "Current Budget", value: "$" + cState.budget.toFixed(2) }
@@ -144,6 +153,12 @@ async function handleUser(message) {
             }
             cState[fnName]()
             break;
+        case 'help':
+            let fields = [];
+            for (var commandKey in userCommands) {
+                fields.push({name:commandKey,value:userCommands[commandKey]})
+            }
+            sendEmbed('List of user commands:',message.channel,"Help",fields)
         }
 }
 
