@@ -1,12 +1,21 @@
 const Discord = require('discord.js');
-const auth = require('./auth.json')
+const auth = require('./auth.json');
+// const start_1 = require('./1-start.json');
 const client = new Discord.Client();
 
-var scrape = require('./scrape')
+// var StateMachine = require('javascript-state-machine');
+
+var util = require('./util');
+var scrape = require('./scrape');
+var fsmLib = require('./fsm');
+
+let sendEmbed = util.sendEmbed;
+let sendReturnMessage = util.sendReturnEmbed;
+let FSM = fsmLib.fsmFactory;
 
 const channels = {}
 // id is for mr swaglord22
-const adminID = '229426575731326976'
+const adminID = '229426575731326976';
 
 client.on('ready', () => {
     console.log(`Logged in as ${client.user.tag}!`);
@@ -25,17 +34,32 @@ function handleAdmin(message) {
             let startStr = (Object.keys(channels).length === 0) ? 'game start' : 'game restart';
             sendEmbed(startStr,message.channel)
             message.guild.channels.cache.forEach(channel => {
-                if (channel.type == "text") {
-                    channels[channel.id] = {"section":"start","history":[],"checkpoint":0,"budget":0,"items":[]}
-                }
+                if (channel.type !== "text") return;
+                var props = {
+                    budget: 0,
+                    items : [],
+                    machine: new FSM(channel),
+                    toString : function() {
+                        return JSON.stringify({
+                            budget: this.budget,
+                            items: this.items,
+                            state: this.machine.state
+                        })
+                    }
+                };
+                channels[channel.id] = props;
             })
             break;
         case 'show':
             if (args.length > 1 && args[1] == 'all') {
-                sendEmbed(JSON.stringify(channels),message.channel);
+                let fields = [];
+                for (var key in channels) {
+                    fields.push({name: key, value: channels[key].toString()})
+                }
+                sendEmbed("Showing states for all channels.",message.channel,"",fields);
             } else {
                 if (message.channel.id in channels) {
-                    sendEmbed(JSON.stringify(channels[message.channel.id]),message.channel);
+                    sendEmbed(channels[message.channel.id].toString(),message.channel);
                 } else {
                     sendEmbed("Current channel is not found in the channels dictionary.",message.channel);
                 }
@@ -50,7 +74,7 @@ async function handleUser(message) {
     let args = message.content.substr(1).split(' ');
     switch(args[0].toLowerCase()) {
         case 'ping':
-            sendEmbed('justin is the best', message.channel)
+            sendEmbed('justin is the best', message.channel);
             break;
         case 'buy':
             if (args.length < 2) {
@@ -64,7 +88,7 @@ async function handleUser(message) {
             }
             if (isNaN(item.price)) {
                 let title = "__Purchase Failed__";
-                let fields = [{ name: "Current Budget", value: "$"+cState.budget }]
+                let fields = [{ name: "Current Budget", value: "$"+cState.budget }];
                 sendEmbed("Sorry, the price could not be calculated for this URL. Please try another one.", message.channel, title, fields); return;
             }
             if (item.price <= cState.budget) {
@@ -75,17 +99,17 @@ async function handleUser(message) {
                 let fields = [
                     { name: "Title", value: item.title },
                     { name: "Price", value: "$" + item.price.toFixed(2) },
-                    { name: "Initial Budget", value: "$" + origBudget.toFixed(2)},
+                    { name: "Initial Budget", value: "$" + origBudget.toFixed(2) },
                     { name: "Current Budget", value: "$" + cState.budget.toFixed(2) }
                 ]
-                sendEmbed("You have purchased " + item.title + " for $" + item.price + ".", message.channel, title, fields)
+                sendEmbed("You have purchased " + item.title + " for $" + item.price.toFixed(2) + ".", message.channel, title, fields);
             } else {
                 let title = "__Purchase Failed__";
                 let fields = [
                     { name: "Item Cost", value: "$" + item.price.toFixed(2) },
                     { name: "Current Budget", value: "$" + cState.budget.toFixed(2) }
-                ]
-                sendEmbed("You have insufficient funds to purchase \"" + item.title + "\".", message.channel, title, fields)
+                ];
+                sendEmbed("You have insufficient funds to purchase \"" + item.title + "\".", message.channel, title, fields);
             }
             break;
         case 'add':
@@ -93,10 +117,10 @@ async function handleUser(message) {
             if (args.length > 1) {
                 let amount = parseInt(args[1]);
                 if (isNaN(amount)) {
-                    sendEmbed("Invalid number specified.", message.channel)
+                    sendEmbed("Invalid number specified.", message.channel);
                 } else {
                     cState.budget+=amount;
-                    sendEmbed('Added $' + amount + ' to budget.', message.channel)
+                    sendEmbed('Added $' + amount + ' to budget.', message.channel);
                 }
             }
             break;
@@ -104,24 +128,37 @@ async function handleUser(message) {
             let itemsCopy = cState.items;
             while (itemsCopy.length > 0) {
                 let chunk = itemsCopy.slice(0,25);
-                let fields = []
+                let fields = [];
                 chunk.forEach(item => {
-                    fields.push({name:item.product,value:item.title})
+                    fields.push({name:item.product,value:item.title});
                 })
-                sendEmbed('',message.channel, 'Items', fields)
+                sendEmbed('',message.channel, '__Items__', fields);
                 itemsCopy = itemsCopy.slice(25);
             }
-    }
-}
-
-function sendEmbed(text, channel, title, fields) {
-    const embed = new Discord.MessageEmbed()
-        .setColor('#3794be')
-        .setDescription(text)
-        .setFooter('- HezekiahMAN')
-    if (title) embed.setTitle(title);
-    if (fields) embed.addFields(fields);
-    channel.send(embed)
+            break;
+        case 'budget':
+            sendEmbed('', message.channel, false, [{name: 'Current Budget', value:cState.budget}]); break;
+        case 'choose':
+            if (args.length < 2) {
+                sendEmbed('User did not specify an option to choose.', message.channel, title);
+                sendReturnMessage(cState.machine.states[cState.machine.state], message.channel);
+                return;
+            }
+            let choice = cState.machine.choices[args[1]];
+            if (choice == undefined) {
+                sendEmbed('Provided command was not in list of options.', message.channel);
+                sendReturnMessage(cState.machine.states[cState.machine.state], message.channel);
+                return;
+            }
+            let fnName = choice.transition;
+            if (typeof (cState.machine[fnName]) !== "function") {
+                sendEmbed('Transition \"' + fnName + '\" is undefined in state \"' + cState.machine.state + "\"");
+                sendReturnMessage(cState.machine.states[cState.machine.state], message.channel);
+                return;
+            }
+            cState.machine[fnName]()
+            break;
+        }
 }
 
 client.login(auth.token);
