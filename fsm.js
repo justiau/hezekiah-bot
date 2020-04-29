@@ -2,10 +2,12 @@ var StateMachine = require('javascript-state-machine');
 
 var util = require('./util');
 
-var start_1 = require('./data/1-start.json')
-var a_1 = require('./data/1-a.json')
+var start = require('./data/act1/start.json'),
+	park = require('./data/act1/park.json'),
+	parkEmpty = require('./data/act1/parkEmpty.json'),
+	drug = require('./data/act1/drug.json')
 
-let dicts = [start_1,a_1];
+let dicts = [start,park,parkEmpty,drug]
 
 function createStates(dicts) {
 	let states = {}
@@ -19,9 +21,10 @@ function createStates(dicts) {
 var fsmFactory = StateMachine.factory({
 	init: 'start',
 	transitions: [
-		{ name: 'toA', from: 'start', to: 'A' },
-		{ name: 'toB', from: 'start', to: 'B' },
-		{ name: 'toC', from: 'start', to: 'C' }
+		{ name: 'toStart', from: 'drug', to: 'start' },
+		{ name: 'toPark', from: 'start', to: 'park' },
+		{ name: 'toParkEmpty', from: ['start','park'], to: 'parkEmpty' },
+		{ name: 'toDrug', from: 'park', to: 'drug' },
 	],
 	data: function(channel) {
 		return {
@@ -33,30 +36,59 @@ var fsmFactory = StateMachine.factory({
 					"transitions": this.transitions()
 				})
 			},
+			sendPrompt: function() {
+				let dialogueLayer = this.dialogue[this.index];
+				util.sendEmbed(dialogueLayer.prompt, this.channel);
+			},
+			sendOptions: function() {
+				let dialogueLayer = this.dialogue[this.index];
+				let fields = []
+				for (var optionKey in dialogueLayer.options) {
+					let option = dialogueLayer.options[optionKey];
+					let descVal = ("userSays" in option) ? option.userSays : option.desc;
+					if ("cost" in option) descVal += "\n**(Cost: $"+option.cost +")**"
+					fields.push({"name":optionKey,"value":descVal})
+				}
+				util.sendEmbed("Please choose an option below.\nFor example, to choose **Option A** please type: `!choose a`",channel,"",fields)
+			},
+			updateBudget: function(change) {
+				this.budget = Math.round((this.budget + change + Number.EPSILON) * 100) / 100;
+			},
 			channel: channel,
-			choices: {},
 			states: createStates(dicts),
+			dialogue: {},
 			budget: 0,
-			items: [],
+			index: 0,
+			items: []
 		}
 	},
 	methods: {
+		onEnterStart: function() {
+			budget = 0;
+			items = [];
+		},
 		onEnterState: function(lifecycle) {
 			let stateDict = this.states[this.state];
 			if (stateDict !== undefined) {
-				this.choices = stateDict.choices;
-				util.sendReturnEmbed(stateDict, this.channel)
+				this.dialogue = stateDict.dialogue;
+				this.sendPrompt();
+				this.sendOptions();
 			}
 		},
-		onLeaveState: async function(lifecycle) {
-			let stateDict = this.states[this.state];
-			if (stateDict !== undefined) {
-				util.sendEmbed(stateDict.transitions[lifecycle.transition],this.channel);
-				await util.sleep(util.sleepDur);
-			}
-		},
+		// onLeaveState: async function(lifecycle) {
+		// 	let stateDict = this.states[this.state];
+		// 	if (stateDict !== undefined) {
+		// 		util.sendEmbed(stateDict.choices[]transitions[lifecycle.transition],this.channel);
+		// 		await util.sleep(util.sleepDur);
+		// 	}
+		// },
 		onTransition: function() {
-			this.choices = {}
+			this.dialogue = {};
+			this.index = 0;
+		},
+		choose: function() {
+			this.index++;
+			this.sendPrompt();
 		}
 	}
 });

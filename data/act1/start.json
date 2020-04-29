@@ -1,0 +1,25 @@
+{
+    "name": "start",
+    "dialogue": [
+        {
+            "prompt": "You are Hector Kiah, Prime Minister of the Republic of Jooduh. Following a long succession of poor Prime Ministers, Jooduh is rife with gambling and drug addiction. Society completely idolizes money and have abandoned all goodness and wellbeing. Your goal as Prime Minister is to reestablish the Republic of Jooduh to its former glory and bring back the goodness and wellbeing of its citizens, as a shining beacon of hope in a sea of desperate power hungry neighbours.  You wake up to a slightly dark day, the skies are cloudy and the birds are quiet. After having your customary drink of Ceylon black tea, you put on your shoes and head outside. Where would you like to go?",
+            "options": {
+                "a": {
+                    "desc": "The park",
+                    "narrSays": "You decide to go to the park.",
+                    "transition": "toPark"
+                },
+                "b": {
+                    "desc": "The library",
+                    "narrSays": "You decide to go to the library.",
+                    "transition": "toLib"
+                },
+                "c": {
+                    "desc": "Your office",
+                    "narrSays": "You decide to go to your office",
+                    "transition": "toOffice"
+                }
+            }
+        }
+    ]
+}

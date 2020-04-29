@@ -2,27 +2,19 @@ const Discord = require('discord.js');
 const client = new Discord.Client();
 
 const auth = require('./auth.json');
+var commands = require('./commands.json')
 
 var util = require('./util');
 var scrape = require('./scrape');
 var fsmLib = require('./fsm');
 
 let sendEmbed = util.sendEmbed;
-let sendReturnMessage = util.sendReturnEmbed;
+// let sendReturnMessage = util.sendReturnEmbed;
 let FSM = fsmLib.fsmFactory;
 
 const channels = {}
 // id is for mr swaglord22
 const adminID = '229426575731326976';
-
-const userCommands = {
-    "ping": "Ping the bot. Usage: `!ping`",
-    "buy": "Buy an item from Amazon.\nSample Usage: `!buy https://www.amazon.com.au/Estwing-E3-16S-Handle-Ripping-Hammer/dp/B0000224VG/ref=sr_1_1?keywords=hammer&qid=1588074468&sr=8-1`.\nNote that you are only permitted to purchase items from amazon.com or amazon.com.au.",
-    "choose": "Select an option to proceed with. \nSample usage: `!choose a` chooses option a",
-    "items": "Lists the items that Hector currently possesses.\nUsage: `!items`",
-    "budget": "Displays the current amount of money that Hector has.\n Usage: `!budget`",
-    "help": "Displays list of user commands. \n Usage: `!help`"
-}
 
 client.on('ready', () => {
     console.log(`Logged in as ${client.user.tag}!`);
@@ -88,14 +80,14 @@ async function handleUser(message) {
             }
             if (item.price <= cState.budget) {
                 let origBudget = cState.budget;
-                cState.budget = Math.round((cState.budget - item.price + Number.EPSILON) * 100) / 100;
+                cState.updateBudget(-item.price)
                 cState.items.push(item);
                 let title = "Purchase Successful";
                 let fields = [
                     { name: "Title", value: item.title },
                     { name: "Price", value: "$" + item.price.toFixed(2) },
                     { name: "Initial Budget", value: "$" + origBudget.toFixed(2) },
-                    { name: "Current Budget", value: "$" + cState.budget.toFixed(2) }
+                    { name: "Remaining Budget", value: "$" + cState.budget.toFixed(2) }
                 ]
                 sendEmbed("You have purchased " + item.title + " for $" + item.price.toFixed(2) + ".", message.channel, title, fields);
             } else {
@@ -110,12 +102,12 @@ async function handleUser(message) {
         case 'add':
             if (message.author.id != adminID) return;
             if (args.length > 1) {
-                let amount = parseInt(args[1]);
+                let amount = parseFloat(args[1]);
                 if (isNaN(amount)) {
                     sendEmbed("Invalid number specified.", message.channel);
                 } else {
-                    cState.budget+=amount;
-                    sendEmbed('Added $' + amount + ' to budget.', message.channel);
+                    cState.updateBudget(amount);
+                    sendEmbed('Added $' + amount.toFixed(2) + ' to budget.', message.channel);
                 }
             }
             break;
@@ -127,7 +119,7 @@ async function handleUser(message) {
                 chunk.forEach(item => {
                     fields.push({name:item.product,value:item.title});
                 })
-                sendEmbed('',message.channel, '__Items__', fields);
+                sendEmbed('',message.channel, 'Items', fields);
                 itemsCopy = itemsCopy.slice(25);
             }
             break;
@@ -135,28 +127,51 @@ async function handleUser(message) {
             sendEmbed('', message.channel, false, [{name: 'Current Budget', value:"$" + cState.budget}]); break;
         case 'choose':
             if (args.length < 2) {
-                sendEmbed('User did not specify an option to choose.', message.channel, title);
-                sendReturnMessage(cState.states[cState.state], message.channel);
+                sendEmbed('User did not specify an option to choose.', message.channel);
+                cState.sendOptions();
                 return;
             }
-            let choice = cState.choices[args[1]];
+            let choice = cState.dialogue[cState.index].options[args[1]];
             if (choice == undefined) {
                 sendEmbed('Provided command was not in list of options.', message.channel);
-                sendReturnMessage(cState.states[cState.state], message.channel);
+                cState.sendOptions();
                 return;
             }
-            let fnName = choice.transition;
-            if (typeof (cState[fnName]) !== "function") {
-                sendEmbed('Transition \"' + fnName + '\" is undefined in state \"' + cState.state + "\"", message.channel);
-                sendReturnMessage(cState.states[cState.state], message.channel);
-                return;
+            if ("transition" in choice) {
+                let transitionName = choice.transition;
+                if (typeof (cState[transitionName]) === "function") {
+                    if ("cost" in choice) {
+                        if (choice["cost"] <= cState.budget) {
+                            cState.updateBudget(-choice["cost"]);
+                            sendEmbed("Remaining budget: $" + cState.budget.toFixed(2), message.channel);
+                        } else {
+                            let title = "Selection Failed";
+                            let fields = [
+                                { name: "Option Cost", value: "$" + choice["cost"].toFixed(2) },
+                                { name: "Current Budget", value: "$" + cState.budget.toFixed(2) }
+                            ];
+                            sendEmbed("You have insufficient funds to select that option.", message.channel, title, fields);
+                            cState.sendOptions();
+                            return;
+                        }
+                    }
+                    let resultVal = ("userSays" in choice) ? choice.userSays : choice.narrSays;
+                    sendEmbed(resultVal,message.channel)
+                    cState[transitionName]()
+                } else {
+                    sendEmbed('Transition \"' + transitionName + '\" is undefined in state \"' + cState.state + "\"", message.channel);
+                    cState.sendOptions();
+                }
+            } else if ("to" in choice) {
+                cState.index = choice.to;
+                cState.sendPrompt();
+                cState.sendOptions();
             }
-            cState[fnName]()
             break;
         case 'help':
             let fields = [];
-            for (var commandKey in userCommands) {
-                fields.push({name:commandKey,value:userCommands[commandKey]})
+            for (var commandKey in commands) {
+                fields.push({name:commandKey,value:commands[commandKey]})
             }
             sendEmbed('List of user commands:',message.channel,"Help",fields)
         }

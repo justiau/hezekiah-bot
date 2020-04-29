@@ -1,0 +1,61 @@
+{
+    "name": "park",
+    "dialogue": [
+        {
+            "prompt": "The park seems deserted, a relic of a forgotten age. The grass is long and discoloured, and the playground is filled with graffiti. You walk around trying to slowly come to some internal peace but you’re interrupted by a stranger coming towards you in the distance. You consider walking in the other direction but what kind of Prime Minister would do that? “Looking for some Milo man? I got plenty if you wanna.” He looked older than he was, the ripped black jeans and a pink faded hoodie covering his skeleton of a body. The boy looks disheveled, his hair wispy white, from stress, from living on the streets or just from the consumption of Milo, a brown unassuming powder that has plagued Jooduh for generations. You respond:",
+            "options": {
+                "a": {
+                    "userSays": "Yeah bro! Hit me with it baby.",
+                    "transition": "toDrug"
+                },
+                "b": {
+                    "userSays": "Why aren't you in school?",
+                    "to": 1
+                },
+                "c": {
+                    "userSays": "Where are your parents?",
+                    "to": 1
+                }
+            }
+        },
+        {
+            "prompt":"The boy shrugs his shoulders and glances away. He isn’t getting what he looked for and he starts to shift away muttering something about his parents being addicted to the same substance and the schools being closed.",
+            "options": {
+                "a": {
+                    "desc": "You smack him for disrespecting the Prime Minister of the land.",
+                    "narrSays": "You decide to smack him for disrespecting the Prime Minister of the land.",
+                    "transition": "toAssault"
+                },
+                "b": {
+                    "userSays": "Hey, look, here’s some money for food but I don’t want no Milo",
+                    "to": 2
+                },
+                "c": {
+                    "userSays": "Have you heard about our Lord and saviour Jesus Christ?",
+                    "to": 2
+                }
+            }
+        },
+        {
+            "prompt": "The boy looks puzzled, he’s never encountered such a strange man. In his 16 years of roaming the streets, the playground being his home for nearly 5 years after his parents left him, this was different. This man was different. Who was he? Why was he so different? “What you want man I don’t want no trouble just get lost I… I… I’m just trying to earn myself a living here in this hellhole”. You feel a slight burst of fear, worried of what this boy could do, then you calm yourself and:",
+            "options": {
+                "a": {
+                    "userSays": "Come with me, I’ll take you to a rehab centre, it’ll be better for you and you can get yourself a new life",
+                    "transition": "toParkEmpty"
+                },
+                "b": {
+                    "desc": "Buy him a textbook to start learning the drawbacks of Milo addiction",
+                    "cost": 20,
+                    "narrSays": "You decide to buy him a textbook to start learning the drawbacks of Milo addiction.",
+                    "transition": "toParkEmpty"
+                },
+                "c": {
+                    "desc": "Hire a nanny for him that will look after his education, housing and wellbeing",
+                    "cost": 100,
+                    "narrSays": "You decide to hire a nanny for him that will look after his education, housing and wellbeing.",
+                    "transition": "toParkEmpty"
+                }
+            }
+        }
+    ]
+}

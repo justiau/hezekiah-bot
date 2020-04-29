@@ -1,0 +1,15 @@
+{
+    "name": "drug",
+    "dialogue": [
+        {
+            "prompt": "You take the thick brown powder from the boy gleefully. Suddenly you hear a *click* behind you. You turn around to see a reporter with their camera out. You can already see the headline: \"Prime Minister Takes Drugs From Teenager\". You have lost your position as Prime Minister. Game over.",
+            "options": {
+                "a": {
+                    "desc": "Restart the game",
+                    "narrSays": "Restarting...",
+                    "transition": "toStart"
+                }
+            }
+        }
+    ]
+}

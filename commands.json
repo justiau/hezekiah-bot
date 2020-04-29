@@ -1,0 +1,8 @@
+{
+    "ping": "Ping the bot. Usage: `!ping`",
+    "buy": "Buy an item from Amazon.\nSample Usage: `!buy https://www.amazon.com.au/Estwing-E3-16S-Handle-Ripping-Hammer/dp/B0000224VG/ref=sr_1_1?keywords=hammer&qid=1588074468&sr=8-1`.\nNote that you are only permitted to purchase items from amazon.com or amazon.com.au.",
+    "choose": "Select an option to proceed with. \nSample usage: `!choose a` chooses option a",
+    "items": "Lists the items that Hector currently possesses.\nUsage: `!items`",
+    "budget": "Displays the current amount of money that Hector has.\n Usage: `!budget`",
+    "help": "Displays list of user commands. \n Usage: `!help`"
+}

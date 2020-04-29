@@ -11,15 +11,15 @@ function sendEmbed(text, channel, title, fields) {
     channel.send(embed);
 }
 
-async function sendReturnEmbed(stateDict, channel) {
-    sendEmbed(stateDict.onEntry, channel);
-    await sleep(sleepDur);
-    let fields = []
-    for (var choiceKey in stateDict.choices) {
-        fields.push({"name":choiceKey,"value":stateDict.choices[choiceKey].description})
-    }
-    sendEmbed("Please choose an option below.\nFor example, to choose __Option A__ please type: `!choose a`",channel,"",fields)
-}
+// async function sendReturnEmbed(stateDict, channel) {
+//     sendEmbed(stateDict.onEntry, channel);
+//     await sleep(sleepDur);
+//     let fields = []
+//     for (var choiceKey in stateDict.choices) {
+//         fields.push({"name":choiceKey,"value":stateDict.choices[choiceKey].description})
+//     }
+//     sendEmbed("Please choose an option below.\nFor example, to choose __Option A__ please type: `!choose a`",channel,"",fields)
+// }
 
 function sleep(ms) {
     return new Promise((resolve) => {
@@ -29,7 +29,6 @@ function sleep(ms) {
 
 module.exports = {
     sendEmbed: sendEmbed,
-    sendReturnEmbed: sendReturnEmbed,
     sleep: sleep,
     sleepDur: sleepDur
 }
