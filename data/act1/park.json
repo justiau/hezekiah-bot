@@ -41,19 +41,43 @@
             "options": {
                 "a": {
                     "userSays": "Come with me, I’ll take you to a rehab centre, it’ll be better for you and you can get yourself a new life",
-                    "transition": "toParkEmpty"
+                    "to": 3,
+                    "updateDefaultLanding": {
+                        "park": 3
+                    }
                 },
                 "b": {
                     "desc": "Buy him a textbook to start learning the drawbacks of Milo addiction",
                     "cost": 20,
                     "narrSays": "You decide to buy him a textbook to start learning the drawbacks of Milo addiction.",
-                    "transition": "toParkEmpty"
+                    "to": 3,
+                    "updateDefaultLanding": {
+                        "park": 3
+                    }
                 },
                 "c": {
                     "desc": "Hire a nanny for him that will look after his education, housing and wellbeing",
                     "cost": 100,
                     "narrSays": "You decide to hire a nanny for him that will look after his education, housing and wellbeing.",
-                    "transition": "toParkEmpty"
+                    "to": 3,
+                    "updateDefaultLanding": {
+                        "park": 3
+                    }
+                }
+            }
+        },
+        {
+            "prompt": "The park is now completely empty. Where would you like to go?",
+            "options": {
+                "a": {
+                    "desc": "Go to the library",
+                    "narrSays": "You decide to go to the library",
+                    "transition": "toLib"
+                },
+                "b": {
+                    "desc": "Go to the office",
+                    "narrSays": "You decide to go to the office",
+                    "transition": "toOff"
                 }
             }
         }

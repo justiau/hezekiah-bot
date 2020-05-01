@@ -9,10 +9,9 @@ var scrape = require('./scrape');
 var fsmLib = require('./fsm');
 
 let sendEmbed = util.sendEmbed;
-// let sendReturnMessage = util.sendReturnEmbed;
 let FSM = fsmLib.fsmFactory;
 
-const channels = {}
+var channelStates = {}
 // id is for mr swaglord22
 const adminID = '229426575731326976';
 
@@ -23,41 +22,39 @@ client.on('ready', () => {
 client.on('message', message => {
     if (message.author.bot || message.content.substr(0,1) != '!') return;
     if (message.author.id == adminID) handleAdmin(message);
-    if (message.channel.id in channels) handleUser(message);
+    if (message.channel.id in channelStates) handleUser(message);
 });
 
 function handleAdmin(message) {
     let args = message.content.toLowerCase().substr(1).split(' ');
     switch(args[0]) {
         case 'start':
-            let startStr = (Object.keys(channels).length === 0) ? 'game start' : 'game restart';
-            sendEmbed(startStr,message.channel)
             message.guild.channels.cache.forEach(channel => {
                 if (channel.type !== "text") return;
-                channels[channel.id] = new FSM(channel);
+                channelStates[channel.id] = new FSM(channel);
             })
             break;
         case 'show':
             if (args.length > 1 && args[1] == 'all') {
                 let fields = [];
-                for (var key in channels) {
-                    fields.push({name: key, value: channels[key].toString()})
+                for (var key in channelStates) {
+                    fields.push({name: key, value: channelStates[key].toString()})
                 }
                 sendEmbed("Showing states for all channels.",message.channel,"",fields);
             } else {
-                if (message.channel.id in channels) {
-                    sendEmbed(channels[message.channel.id].toString(),message.channel);
+                if (message.channel.id in channelStates) {
+                    sendEmbed(channelStates[message.channel.id].toString(),message.channel);
                 } else {
                     sendEmbed("Current channel is not found in the channels dictionary.",message.channel);
                 }
             }
-            console.log(channels)
+            console.log(channelStates)
             break;
     }
 }
 
 async function handleUser(message) {
-    let cState = channels[message.channel.id]
+    let cState = channelStates[message.channel.id]
     let args = message.content.substr(1).split(' ');
     switch(args[0].toLowerCase()) {
         case 'ping':
@@ -72,13 +69,18 @@ async function handleUser(message) {
             if (item.error) {
                 let title = "Purchase Failed";
                 sendEmbed("The provided URL is not recognised as on www.amazon.com.au or www.amazon.com. Please try another one.", message.channel, title); return;
-            }
-            if (isNaN(item.price)) {
+            } else if (isNaN(item.price)) {
                 let title = "Purchase Failed";
                 let fields = [{ name: "Current Budget", value: "$"+cState.budget }];
                 sendEmbed("Sorry, the price could not be calculated for this URL. Please try another one.", message.channel, title, fields); return;
-            }
-            if (item.price <= cState.budget) {
+            } else if (item.price > cState.budget) {
+                let title = "Purchase Failed";
+                let fields = [
+                    { name: "Item Cost", value: "$" + item.price.toFixed(2) },
+                    { name: "Current Budget", value: "$" + cState.budget.toFixed(2) }
+                ];
+                sendEmbed("You have insufficient funds to purchase \"" + item.title + "\".", message.channel, title, fields);
+            } else {
                 let origBudget = cState.budget;
                 cState.updateBudget(-item.price)
                 cState.items.push(item);
@@ -90,13 +92,6 @@ async function handleUser(message) {
                     { name: "Remaining Budget", value: "$" + cState.budget.toFixed(2) }
                 ]
                 sendEmbed("You have purchased " + item.title + " for $" + item.price.toFixed(2) + ".", message.channel, title, fields);
-            } else {
-                let title = "Purchase Failed";
-                let fields = [
-                    { name: "Item Cost", value: "$" + item.price.toFixed(2) },
-                    { name: "Current Budget", value: "$" + cState.budget.toFixed(2) }
-                ];
-                sendEmbed("You have insufficient funds to purchase \"" + item.title + "\".", message.channel, title, fields);
             }
             break;
         case 'add':
@@ -124,48 +119,63 @@ async function handleUser(message) {
             }
             break;
         case 'budget':
-            sendEmbed('', message.channel, false, [{name: 'Current Budget', value:"$" + cState.budget}]); break;
+            sendEmbed('', message.channel, false, [{name: 'Current Budget', value:"$" + cState.budget}]);
+            break;
         case 'choose':
-            if (args.length < 2) {
-                sendEmbed('User did not specify an option to choose.', message.channel);
-                cState.sendOptions();
-                return;
-            }
-            let choice = cState.dialogue[cState.index].options[args[1]];
-            if (choice == undefined) {
-                sendEmbed('Provided command was not in list of options.', message.channel);
-                cState.sendOptions();
-                return;
-            }
-            if ("transition" in choice) {
-                let transitionName = choice.transition;
-                if (typeof (cState[transitionName]) === "function") {
+            if (args.length > 1) {
+                let choice = cState.dialogue[cState.index].options[args[1]];
+                if (choice !== undefined) {
+                    // ensure transition is valid
+                    if (("transition" in choice) && (typeof(cState[choice.transition]) !== "function")) {
+                        sendEmbed("Selection: \"" + args[1] + "\" caused invalid transition: \"" + choice.transition + "\" which is not in " + cState.state + "\'s transitions: " + cState.transitions(), message.channel);
+                        cState.sendOptions();
+                        return;
+                    }
+                    // if choice has a cost attached to it
                     if ("cost" in choice) {
                         if (choice["cost"] <= cState.budget) {
                             cState.updateBudget(-choice["cost"]);
                             sendEmbed("Remaining budget: $" + cState.budget.toFixed(2), message.channel);
                         } else {
-                            let title = "Selection Failed";
-                            let fields = [
-                                { name: "Option Cost", value: "$" + choice["cost"].toFixed(2) },
-                                { name: "Current Budget", value: "$" + cState.budget.toFixed(2) }
-                            ];
-                            sendEmbed("You have insufficient funds to select that option.", message.channel, title, fields);
+                            let fields = [{ name: "Option Cost", value: "$" + choice["cost"].toFixed(2) },{ name: "Current Budget", value: "$" + cState.budget.toFixed(2) }];
+                            sendEmbed("You have insufficient funds to select that option.", message.channel, "Selection Failed", fields);
                             cState.sendOptions();
                             return;
                         }
                     }
-                    let resultVal = ("userSays" in choice) ? choice.userSays : choice.narrSays;
-                    sendEmbed(resultVal,message.channel)
-                    cState[transitionName]()
+                    // if choice changes landing of other state
+                    if ("updateDefaultLanding" in choice) {
+                        for (var landingState in choice.updateDefaultLanding) {
+                            // update fsm states dict to for new landing index for dialogue
+                            cState.defaultLandings[landingState] = choice.updateDefaultLanding[landingState]
+                        }
+                    }
+                    // if choice results in state transition
+                    if ("transition" in choice) {
+                        let resultVal = ("userSays" in choice) ? choice.userSays : choice.narrSays;
+                        sendEmbed(resultVal,message.channel)
+                        if ("landing" in choice) {
+                            cState[choice.transition](choice.landing);
+                        } else {
+                            cState[choice.transition]();
+                        }
+                    } else if ("to" in choice) {
+                        cState.choose(choice.to);
+                    }
                 } else {
-                    sendEmbed('Transition \"' + transitionName + '\" is undefined in state \"' + cState.state + "\"", message.channel);
+                    sendEmbed('Provided command was not in list of options.', message.channel);
                     cState.sendOptions();
                 }
-            } else if ("to" in choice) {
-                cState.index = choice.to;
-                cState.sendPrompt();
+            } else {
+                sendEmbed('User did not specify an option to choose.', message.channel);
                 cState.sendOptions();
+            }
+            break;
+        case 'answer':
+            if (args.length > 1) {
+
+            } else {
+                sendEmbed('User did not provide an answer.\nAnswer usage: `!answer thisismyanswer`', message.channel)
             }
             break;
         case 'help':
@@ -174,6 +184,7 @@ async function handleUser(message) {
                 fields.push({name:commandKey,value:commands[commandKey]})
             }
             sendEmbed('List of user commands:',message.channel,"Help",fields)
+            break;
         }
 }
 

@@ -17,7 +17,7 @@
                 "c": {
                     "desc": "Your office",
                     "narrSays": "You decide to go to your office",
-                    "transition": "toOffice"
+                    "transition": "toOff"
                 }
             }
         }
