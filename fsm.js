@@ -100,20 +100,7 @@ var fsmFactory = StateMachine.factory({
 				} else {
 					util.sendEmbed("",this.channel,"Incorrect!",[{name:"Correct Answer",value: this.answer}]);
 				}
-				if (this.index < this.quiz.length - 1) {
-					this.updateIndex(this.index + 1);
-				} else {
-					util.sendEmbed("You answered " + this.correct + " out of " + this.quiz.length + " questions correctly.",this.channel);
-					if ("result" in this.postQuiz) {
-						let budgetChange = 0;
-						if ("eachIncorrect" in this.postQuiz.result)
-							budgetChange = budgetChange + (this.quiz.length - this.correct) * this.postQuiz.result.eachIncorrect;
-						if ("eachCorrect" in this.postQuiz.result)
-							budgetChange = budgetChange + (this.correct * this.postQuiz.result.eachCorrect)
-						this.updateBudget(budgetChange);
-					}
-					this[this.postQuiz.transition](this.postQuiz.landing || 0);
-				}
+				this.next();
 			} else {
 				// if choice has a cost attached to it
 				if ("cost" in choice) {
@@ -176,6 +163,14 @@ var fsmFactory = StateMachine.factory({
 				this.options.forEach((item,index) => {
 					fields.push({"name":String.fromCharCode(97 + parseInt(index)),"value":item})
 				});
+				let startState = this.state;
+				let startIndex = this.index;
+				setTimeout(() => {
+					if ((startIndex == this.index) && (startState == this.state)) {
+						util.sendEmbed("You ran out of time to answer the question!",this.channel);
+						this.next();
+					}
+				}, 15000);
 			} else {
 				for (var optionKey in this.options) {
 					let option = this.options[optionKey];
@@ -304,6 +299,22 @@ var fsmFactory = StateMachine.factory({
 			this.updateOptions();
 			this.sendPrompt();
 			this.sendOptions();
+		},
+		next() {
+			if (this.index < this.quiz.length - 1) {
+				this.updateIndex(this.index + 1);
+			} else {
+				util.sendEmbed("You answered " + this.correct + " out of " + this.quiz.length + " questions correctly.",this.channel);
+				if ("result" in this.postQuiz) {
+					let budgetChange = 0;
+					if ("eachIncorrect" in this.postQuiz.result)
+						budgetChange = budgetChange + (this.quiz.length - this.correct) * this.postQuiz.result.eachIncorrect;
+					if ("eachCorrect" in this.postQuiz.result)
+						budgetChange = budgetChange + (this.correct * this.postQuiz.result.eachCorrect)
+					this.updateBudget(budgetChange);
+				}
+				this[this.postQuiz.transition](this.postQuiz.landing || 0);
+			}
 		},
 		toString: function() {
 			return JSON.stringify({
