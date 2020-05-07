@@ -1,5 +1,6 @@
 {
     "name": "office",
+    "type": "dialogue",
     "dialogue": [
         {
             "prompt": "You enter your office. Your secretary is there but completely focussed on her online gambling on her phone. Maybe if you could give her some medication it would be easier to talk to her...",

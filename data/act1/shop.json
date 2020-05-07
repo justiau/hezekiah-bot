@@ -1,5 +1,6 @@
 {
     "name": "shop",
+    "type": "dialogue",
     "dialogue": [
         {
             "prompt": "You arrive at the shops. The following items are available for purchase.\nUsage: `!buy paintbrush`.",

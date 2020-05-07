@@ -1,5 +1,6 @@
 {
     "name": "church",
+    "type": "dialogue",
     "dialogue": [
         {
             "prompt": "You arrive outside the Church. It is very empty… The doors are broken and must not have been opened in decades. If you had some tool, you might be able to fix them…",

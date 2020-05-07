@@ -30,15 +30,13 @@ var fsmFactory = StateMachine.factory({
 		return {
 			channel: channel,
 			defaultLandings: {},
-			dialogue: [],
+			interactions: [],
 			options: [],
 			shop: {},
 			budget: 0,
 			index: 0,
 			items: {},
-			status: {church:"doors"},
-			mode: "",
-			correct: 0
+			status: {church:"doors"}
 		}
 	},
 	methods: {
@@ -60,14 +58,13 @@ var fsmFactory = StateMachine.factory({
 		onEnterState: function(lifecycle) {
 			let stateDict = states[this.state];
 			if (stateDict !== undefined) {
-				if ("dialogue" in stateDict) {
-					this.mode = "dialogue";
-					this.dialogue = stateDict.dialogue;
-				}
-				else if ("quiz" in stateDict) {
-					this.mode = "quiz";
-					this.quiz = stateDict.quiz;
-					this.postQuiz = stateDict.postQuiz;
+				this.mode = stateDict.type;
+				if (this.mode == "dialogue") {
+					this.interactions = stateDict.dialogue;
+				} else if (this.mode == "quiz") {
+					this.interactions = stateDict.quiz;
+					this.quizState = stateDict.postQuiz;
+					this.quizState.correct = 0;
 				}
 				this.updateOptions();
 				this.sendPrompt();
@@ -76,8 +73,7 @@ var fsmFactory = StateMachine.factory({
 			}
 		},
 		onTransition: function(lifecycle, landingIndex) {
-			this.dialogue = [];
-			this.quiz = [];
+			this.interactions = [];
 			if (landingIndex) {
 				this.index = landingIndex;
 			} else if (lifecycle.to in this.defaultLandings) {
@@ -86,17 +82,15 @@ var fsmFactory = StateMachine.factory({
 				this.index = 0;
 			}
 			this.shop = {};
-			this.mode = "",
-			this.correct = 0;
 		},
 		onAct2: function(lifecycle) {
 			util.sendEmbed("CONGRATULATIONS! YOU'RE DONE for now.",this.channel)
 		},
 		choose: function(choice) {
 			if (this.mode == "quiz") {
-				if (choice == this.answer) {
+				if (choice == this.quizState.answer) {
 					util.sendEmbed("**Correct!**",this.channel);
-					this.correct++;
+					this.quizState.correct++;
 				} else {
 					util.sendEmbed("",this.channel,"Incorrect!",[{name:"Correct Answer",value: this.answer}]);
 				}
@@ -106,7 +100,7 @@ var fsmFactory = StateMachine.factory({
 				if ("cost" in choice) {
 					if (choice["cost"] <= this.budget) {
 						this.updateBudget(-choice["cost"]);
-						sendEmbed("Remaining budget: $" + this.budget.toFixed(2), this.channel);
+						util.sendEmbed("Remaining budget: $" + this.budget.toFixed(2), this.channel);
 					} else {
 						var fields = [{ name: "Option Cost", value: "$" + choice["cost"].toFixed(2) },{ name: "Current Budget", value: "$" + this.budget.toFixed(2) }];
 						util.sendEmbed("You have insufficient funds to select that option.", this.channel, "Selection Failed", fields);
@@ -114,6 +108,8 @@ var fsmFactory = StateMachine.factory({
 						return;
 					}
 				}
+				let postVal = ("narrSays" in choice) ? choice.narrSays : "\"" + choice.userSays + "\"";
+				if (postVal) util.sendEmbed(postVal,this.channel)
 				// if choice has a result
 				if ("result" in choice) {
 					if ("budget" in choice.result) {
@@ -131,8 +127,6 @@ var fsmFactory = StateMachine.factory({
 						this.updateLandings(choice.result.defaultLandings);
 					}
 				}
-				let postVal = ("narrSays" in choice) ? choice.narrSays : "\"" + choice.userSays + "\"";
-				if (postVal) util.sendEmbed(postVal,this.channel)
 				if ("transition" in choice) {
 					if ("landing" in choice) {
 						this[choice.transition](choice.landing);
@@ -147,37 +141,31 @@ var fsmFactory = StateMachine.factory({
 			}
 		},
 		sendPrompt: function() {
-			let prompt;
-			if (this.mode == "dialogue") {
-				let dialogueLayer = this.dialogue[this.index];
-				prompt = dialogueLayer.prompt;
-			} else if (this.mode == "quiz") {
-				let questionLayer = this.quiz[this.index];
-				prompt = questionLayer.question;
-			}
+			let section = this.interactions[this.index];
+			let prompt = (this.mode == "dialogue") ? section.prompt : section.question;
 			util.sendEmbed(prompt, this.channel);
 		},
 		sendOptions: function() {
 			let fields = []
 			if (this.mode == "quiz") {
-				this.options.forEach((item,index) => {
-					fields.push({"name":String.fromCharCode(97 + parseInt(index)),"value":item})
+				this.options.forEach((option,index) => {
+					fields.push({"name":String.fromCharCode(97 + parseInt(index)),"value":option})
 				});
 				let startState = this.state;
 				let startIndex = this.index;
+				let answer = this.quizState.answer;
 				setTimeout(() => {
 					if ((startIndex == this.index) && (startState == this.state)) {
-						util.sendEmbed("You ran out of time to answer the question!",this.channel);
+						util.sendEmbed("",this.channel,"Question Timeout",[{name: "Correct Answer", value: answer}]);
 						this.next();
 					}
 				}, 15000);
-			} else {
-				for (var optionKey in this.options) {
-					let option = this.options[optionKey];
+			} else if (this.mode == "dialogue") {
+				this.options.forEach((option,index) => {
 					let descVal = ("userSays" in option) ? "\"" + option.userSays + "\"": option.desc;
 					if ("cost" in option) descVal += "\n(Cost: $"+option.cost +")";
-					fields.push({"name":String.fromCharCode(97 + parseInt(optionKey)),"value":descVal})
-				}
+					fields.push({"name":String.fromCharCode(97 + parseInt(index)),"value":descVal})
+				})
 			}
 			if (this.options.length > 0)
 				util.sendEmbed("Please choose an option below.\nFor example, to choose **Option A** please type: `!choose a`",this.channel,"",fields)
@@ -209,11 +197,35 @@ var fsmFactory = StateMachine.factory({
 				util.sendEmbed("",this.channel,"Shop Catalogue",fields);
 			}
 		},
+		sendBudget: function() {
+			util.sendEmbed("", this.channel, "Budget", [{name: 'Current Budget', value:"$" + this.budget}]);
+		},
 		getShopItem: function(queryItemName) {
 			if (queryItemName in this.shop) {
 				return {name: queryItemName, price: this.shop[queryItemName]}
 			}
 			return null;
+		},
+		buyItem: function(item) {
+			if (item.price > this.budget) {
+				let title = "Purchase Failed";
+                var fields = [
+                    { name: "Item Cost", value: "$" + item.price.toFixed(2) },
+					{ name: "Current Budget", value: "$" + this.budget.toFixed(2) }
+                ];
+                util.sendEmbed("You have insufficient funds to purchase \"" + item.name + "\".", this.channel, title, fields);
+			} else {
+				this.addItem(item);
+				let title = "Purchase Successful";
+				var fields = [
+					{ name: "Title", value: item.name },
+					{ name: "Price", value: "$" + item.price.toFixed(2) },
+					{ name: "Remaining Budget", value: "$" + this.budget.toFixed(2) }
+				]
+				util.sendEmbed("You have purchased " + item.name + " for $" + item.price.toFixed(2) + ".", this.channel, title, fields);
+				this.updateBudget(-item.price,true)
+				this.sendShop();	
+			}
 		},
 		addItem: function(item) {
 			if (item.name in this.items) {
@@ -232,12 +244,12 @@ var fsmFactory = StateMachine.factory({
 				}
 			}
 		},
-		updateBudget: function(change) {
+		updateBudget: function(change, quiet) {
 			this.budget = Math.round((this.budget + change + Number.EPSILON) * 100) / 100;
 			if (this.budget < 0)
 				this.budget = 0;
 			let changeStr = (change >= 0) ? "+"+change : change
-			util.sendEmbed("",this.channel,"Budget Change: " + changeStr,[{name:"Current Budget",value:this.budget}])
+			if ((quiet === undefined) || !quiet) util.sendEmbed("",this.channel,"Budget Change: " + changeStr,[{name:"Current Budget",value:"$" + this.budget.toFixed(2)}])
 		},
 		updateStatus: function(statusDict) {
 			for (var statusKey in statusDict) {
@@ -250,17 +262,15 @@ var fsmFactory = StateMachine.factory({
 			}
 		},
 		updateOptions: function() {
-			let options;
-			if (this.mode == "dialogue") {
-				let dialogueLayer = this.dialogue[this.index];
-				if (dialogueLayer === undefined || !("options" in dialogueLayer)) return;
-				if ("items" in dialogueLayer) {
-					this.shop = dialogueLayer.items;
-				}
-				options = [];
-				optionLoop:
-				for (var optionKey in dialogueLayer.options) {
-					let option = dialogueLayer.options[optionKey];
+			let section = this.interactions[this.index];
+			if (section === undefined) return;
+			if (this.mode == "quiz") {
+				this.options = section.options;
+				this.quizState.answer = section.answer;
+			} else if (this.mode == "dialogue") {
+				if ("items" in section) this.shop = section.items;
+				let options = [];
+				section.options.forEach((option) => {
 					if ("cond" in option) {
 						for (var condType in option.cond) {
 							condSwitch:
@@ -271,49 +281,46 @@ var fsmFactory = StateMachine.factory({
 										let condItem = option.cond.items[itemKey]
 										itemKey = itemKey.toLowerCase();
 										let condTrue = (itemKey in this.items && (this.items[itemKey].quantity >= condItem.quantity))
-										if (!condTrue) continue optionLoop;
+										if (!condTrue) return;
 									}
 									break condSwitch;
 								case 'status':
+									// Check all status requirements are met
 									for (var statusKey in option.cond.status) {
 										let statusBl = option.cond.status[statusKey]
 										let condTrue = 	((statusKey in this.status && (this.status[statusKey] == statusBl))
 														|| (!(statusKey in this.status) && !statusBl));
-										if (!condTrue) continue optionLoop;
+										if (!condTrue) return;
 									}
+									break condSwitch;
 							}
 						}
 					}
 					options.push(option);
-				}
-			} else if (this.mode == "quiz") {
-				let quizLayer = this.quiz[this.index];
-				if (quizLayer === undefined || !("options" in quizLayer)) return;
-				options = quizLayer.options;
-				this.answer = quizLayer.answer;
+				});
+				this.options = options;
 			}
-			this.options = options;
 		},
-		updateIndex(toIndex) {
+		updateIndex: function(toIndex) {
 			this.index = toIndex;
 			this.updateOptions();
 			this.sendPrompt();
 			this.sendOptions();
 		},
-		next() {
-			if (this.index < this.quiz.length - 1) {
+		next: function() {
+			if (this.index < this.interactions.length - 1) {
 				this.updateIndex(this.index + 1);
 			} else {
-				util.sendEmbed("You answered " + this.correct + " out of " + this.quiz.length + " questions correctly.",this.channel);
-				if ("result" in this.postQuiz) {
+				util.sendEmbed("You answered " + this.quizState.correct + " out of " + this.interactions.length + " questions correctly.",this.channel);
+				if ("result" in this.quizState) {
 					let budgetChange = 0;
-					if ("eachIncorrect" in this.postQuiz.result)
-						budgetChange = budgetChange + (this.quiz.length - this.correct) * this.postQuiz.result.eachIncorrect;
-					if ("eachCorrect" in this.postQuiz.result)
-						budgetChange = budgetChange + (this.correct * this.postQuiz.result.eachCorrect)
+					if ("eachIncorrect" in this.quizState.result)
+						budgetChange = budgetChange + (this.interactions.length - this.quizState.correct) * this.quizState.result.eachIncorrect;
+					if ("eachCorrect" in this.quizState.result)
+						budgetChange = budgetChange + (this.quizState.correct * this.quizState.result.eachCorrect)
 					this.updateBudget(budgetChange);
 				}
-				this[this.postQuiz.transition](this.postQuiz.landing || 0);
+				this[this.quizState.transition](this.quizState.landing || 0);
 			}
 		},
 		toString: function() {

@@ -1,5 +1,6 @@
 {
     "name": "home",
+    "type": "dialogue",
     "dialogue": [
         {
             "prompt": "You arrive back home. You brew another cup of black Ceylon tea and enjoy it while listening to the smooth, smooth beats of Outkast's \"Hey Ya!\". The are deeply serenated by the hauntingly beautiful melody.\nShouldn't you be working? Judah isn't going to fix itself.",

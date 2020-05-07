@@ -91,26 +91,8 @@ async function handleUser(message) {
                     "The price for that item could not be calculated" :
                     "The price could not be calculated for this URL. Please try another one.";
                 sendEmbed(desc, message.channel, title, fields); return;
-            } else if (item.price > cState.budget) {
-                let title = "Purchase Failed";
-                var fields = [
-                    { name: "Item Cost", value: "$" + item.price.toFixed(2) },
-                    { name: "Current Budget", value: "$" + cState.budget.toFixed(2) }
-                ];
-                sendEmbed("You have insufficient funds to purchase \"" + item.name + "\".", message.channel, title, fields);
             } else {
-                let origBudget = cState.budget;
-                cState.updateBudget(-item.price)
-                cState.addItem(item);
-                let title = "Purchase Successful";
-                var fields = [
-                    { name: "Title", value: item.name },
-                    { name: "Price", value: "$" + item.price.toFixed(2) },
-                    { name: "Initial Budget", value: "$" + origBudget.toFixed(2) },
-                    { name: "Remaining Budget", value: "$" + cState.budget.toFixed(2) }
-                ]
-                sendEmbed("You have purchased " + item.name + " for $" + item.price.toFixed(2) + ".", message.channel, title, fields);
-                cState.sendShop();
+                cState.buyItem(item);
             }
             break;
         case 'add':
@@ -129,7 +111,7 @@ async function handleUser(message) {
             cState.sendItems();
             break;
         case 'budget':
-            sendEmbed('', message.channel, false, [{name: 'Current Budget', value:"$" + cState.budget}]);
+            cState.sendBudget();
             break;
         case 'choose':
             if (args.length > 1) {

@@ -1,5 +1,6 @@
 {
     "name": "churchQuiz",
+    "type": "quiz",
     "quiz": [
         {
             "question": "How old was Hezekiah when he became king and reigned in Jerusalem?",
