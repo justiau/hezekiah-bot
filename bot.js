@@ -1,5 +1,6 @@
 const Discord = require('discord.js');
 const client = new Discord.Client();
+const urlLib = require('url');
 
 const auth = require('./auth.json');
 var commands = require('./commands.json')
@@ -36,7 +37,7 @@ function handleAdmin(message) {
             break;
         case 'show':
             if (args.length > 1 && args[1] == 'all') {
-                let fields = [];
+                var fields = [];
                 for (var key in channelStates) {
                     fields.push({name: key, value: channelStates[key].toString()})
                 }
@@ -63,35 +64,53 @@ async function handleUser(message) {
         case 'buy':
             if (args.length < 2) {
                 let title = "Purchase Failed";
-                sendEmbed('User did not specify an Amazon product to purchase.', message.channel, title); return;
+                sendEmbed('User did not specify an item to purchase.', message.channel, title); return;
             }
-            let item = await scrape.getItem(args[1]);
-            if (item.error) {
+            let urlObj = urlLib.parse(args[1]);
+            let queryStr;
+            let item;
+            let method;
+            if (urlObj.hostname === null) {
+                queryStr = args.slice(1).join(' ');
+                item = cState.getItem(queryStr);
+                method = "local";
+            } else {
+                item = await scrape.getItem(args[1]);
+                method = "online";
+            }
+            if (item === null) {
                 let title = "Purchase Failed";
-                sendEmbed("The provided URL is not recognised as on www.amazon.com.au or www.amazon.com. Please try another one.", message.channel, title); return;
+                let desc = (method == "local") ?
+                    "The provided item: " + queryStr + " was not found in the shop.":
+                    "The provided URL is not recognised as on www.amazon.com.au or www.amazon.com. Please try another one.";
+                sendEmbed(desc, message.channel, title); return;
             } else if (isNaN(item.price)) {
                 let title = "Purchase Failed";
-                let fields = [{ name: "Current Budget", value: "$"+cState.budget }];
-                sendEmbed("Sorry, the price could not be calculated for this URL. Please try another one.", message.channel, title, fields); return;
+                var fields = [{ name: "Current Budget", value: "$"+cState.budget }];
+                let desc = (method == "local") ?
+                    "The price for that item could not be calculated" :
+                    "The price could not be calculated for this URL. Please try another one.";
+                sendEmbed(desc, message.channel, title, fields); return;
             } else if (item.price > cState.budget) {
                 let title = "Purchase Failed";
-                let fields = [
+                var fields = [
                     { name: "Item Cost", value: "$" + item.price.toFixed(2) },
                     { name: "Current Budget", value: "$" + cState.budget.toFixed(2) }
                 ];
-                sendEmbed("You have insufficient funds to purchase \"" + item.title + "\".", message.channel, title, fields);
+                sendEmbed("You have insufficient funds to purchase \"" + item.name + "\".", message.channel, title, fields);
             } else {
                 let origBudget = cState.budget;
                 cState.updateBudget(-item.price)
-                cState.items.push(item);
+                cState.addItem(item);
                 let title = "Purchase Successful";
-                let fields = [
-                    { name: "Title", value: item.title },
+                var fields = [
+                    { name: "Title", value: item.name },
                     { name: "Price", value: "$" + item.price.toFixed(2) },
                     { name: "Initial Budget", value: "$" + origBudget.toFixed(2) },
                     { name: "Remaining Budget", value: "$" + cState.budget.toFixed(2) }
                 ]
-                sendEmbed("You have purchased " + item.title + " for $" + item.price.toFixed(2) + ".", message.channel, title, fields);
+                sendEmbed("You have purchased " + item.name + " for $" + item.price.toFixed(2) + ".", message.channel, title, fields);
+                cState.sendShop();
             }
             break;
         case 'add':
@@ -107,23 +126,16 @@ async function handleUser(message) {
             }
             break;
         case 'items':
-            let itemsCopy = cState.items;
-            while (itemsCopy.length > 0) {
-                let chunk = itemsCopy.slice(0,25);
-                let fields = [];
-                chunk.forEach(item => {
-                    fields.push({name:item.product,value:item.title});
-                })
-                sendEmbed('',message.channel, 'Items', fields);
-                itemsCopy = itemsCopy.slice(25);
-            }
+            cState.sendItems();
             break;
         case 'budget':
             sendEmbed('', message.channel, false, [{name: 'Current Budget', value:"$" + cState.budget}]);
             break;
         case 'choose':
             if (args.length > 1) {
-                let choice = cState.dialogue[cState.index].options[args[1]];
+                let choiceIndex = (args[1].length == 1) && (args[1].toLowerCase().charCodeAt(0) - 97);
+                // let choice = cState.dialogue[cState.index].options[args[1]];
+                let choice = cState.options[choiceIndex];
                 if (choice !== undefined) {
                     // ensure transition is valid
                     if (("transition" in choice) && (typeof(cState[choice.transition]) !== "function")) {
@@ -137,23 +149,31 @@ async function handleUser(message) {
                             cState.updateBudget(-choice["cost"]);
                             sendEmbed("Remaining budget: $" + cState.budget.toFixed(2), message.channel);
                         } else {
-                            let fields = [{ name: "Option Cost", value: "$" + choice["cost"].toFixed(2) },{ name: "Current Budget", value: "$" + cState.budget.toFixed(2) }];
+                            var fields = [{ name: "Option Cost", value: "$" + choice["cost"].toFixed(2) },{ name: "Current Budget", value: "$" + cState.budget.toFixed(2) }];
                             sendEmbed("You have insufficient funds to select that option.", message.channel, "Selection Failed", fields);
                             cState.sendOptions();
                             return;
                         }
                     }
-                    // if choice changes landing of other state
-                    if ("updateDefaultLanding" in choice) {
-                        for (var landingState in choice.updateDefaultLanding) {
-                            // update fsm states dict to for new landing index for dialogue
-                            cState.defaultLandings[landingState] = choice.updateDefaultLanding[landingState]
+                    if ("result" in choice) {
+                        if ("budget" in choice.result) {
+                            cState.updateBudget(choice.result.budget);
+                        }
+                        if ("takeItems" in choice.result) {
+                            choice.result.takeItems.forEach(takeItem => {
+                                cState.rmItem(takeItem)
+                            });
+                        }
+                        if ("status" in choice.result) {
+                            cState.updateStatus(choice.result.status);
+                        }
+                        if ("defaultLandings" in choice.result) {
+                            cState.updateLandings(choice.result.defaultLandings);
                         }
                     }
-                    // if choice results in state transition
+                    let resultVal = ("narrSays" in choice) ? choice.narrSays : "\"" + choice.userSays + "\"";
+                    sendEmbed(resultVal,message.channel)
                     if ("transition" in choice) {
-                        let resultVal = ("userSays" in choice) ? choice.userSays : choice.narrSays;
-                        sendEmbed(resultVal,message.channel)
                         if ("landing" in choice) {
                             cState[choice.transition](choice.landing);
                         } else {
@@ -161,6 +181,8 @@ async function handleUser(message) {
                         }
                     } else if ("to" in choice) {
                         cState.choose(choice.to);
+                    } else {
+                        cState.sendOptions();
                     }
                 } else {
                     sendEmbed('Provided command was not in list of options.', message.channel);
@@ -175,11 +197,12 @@ async function handleUser(message) {
             if (args.length > 1) {
 
             } else {
-                sendEmbed('User did not provide an answer.\nAnswer usage: `!answer thisismyanswer`', message.channel)
+                sendEmbed('User did not provide an answer.\nAnswer usage: \"Question: "Who is the coolest??"\n`!answer justin`', message.channel)
             }
             break;
         case 'help':
-            let fields = [];
+            console.log(fields)
+            var fields = [];
             for (var commandKey in commands) {
                 fields.push({name:commandKey,value:commands[commandKey]})
             }

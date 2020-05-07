@@ -1,0 +1,21 @@
+{
+    "name": "shop",
+    "dialogue": [
+        {
+            "prompt": "You arrive at the shops. The following items are available for purchase.\nUsage: `!buy paintbrush`.",
+            "items": {
+                "hammer": 35,
+                "textbook": 20,
+                "addiction medication": 50,
+                "the complete collection of magic school bus (seasons 1-4)": 80
+            },
+            "options": [
+                {
+                    "desc": "Go back home",
+                    "narrSays": "You decide to return home",
+                    "transition": "toHome"
+                }
+            ]
+        }
+    ]
+}

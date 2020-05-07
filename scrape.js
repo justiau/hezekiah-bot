@@ -9,14 +9,14 @@ async function getItem(url) {
     let hostname = urlObj.hostname;
     if (hostname !== "www.amazon.com.au" && hostname !== "www.amazon.com") {
         console.log("Provided: " + hostname)
-        return { error: true, hostname: hostname }
+        return null;
     }
     let targetUrl = (url.indexOf('?') > -1) ? url.split('?')[0] : url;
     let item = await axios.get(targetUrl, {headers: { 'User-Agent': 'Mozilla/5.0'}})
     .then(res => {
         const $ = cheerio.load(res.data);
         let rtn = {error:false}
-        rtn.title = $('#productTitle').text().trim();
+        rtn.name = $('#productTitle').text().trim();
         rtn.category = $('.a-unordered-list.a-horizontal.a-size-small > li:first-child').text().trim();
         rtn.product = $('.a-unordered-list.a-horizontal.a-size-small > li:last-child').text().trim();
         // rtn.price = $('#priceblock_ourprice').text().trim().replace('$','')

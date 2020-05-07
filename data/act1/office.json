@@ -1,0 +1,88 @@
+{
+    "name": "office",
+    "dialogue": [
+        {
+            "prompt": "You enter your office. Your secretary is there but completely focussed on her online gambling on her phone. Maybe if you could give her some medication it would be easier to talk to her...",
+            "options": [
+                {
+                    "desc": "Give her the medication",
+                    "narrSays": "You give her the medication.\nThe next day, your secretary walks in brighter and more attentive than ever before.",
+                    "to": 1,
+                    "cond": {
+                        "items": {
+                            "addiction medication": {
+                                "quantity": 1
+                            }
+                        }
+                    },
+                    "result": {
+                        "takeItems": [
+                            "addiction medication"
+                        ],
+                        "defaultLandings": {
+                            "office": 1
+                        }
+                    }
+                },
+                {
+                    "desc": "Go back home",
+                    "narrSays": "You decide to go back home",
+                    "transition": "toHome"
+                }
+            ]
+        },
+        {
+            "prompt": "Your secretary greets you, \"Good morning Hector! What would you like to do today?\"",
+            "options": [
+                {
+                    "userSays": "I want to destroy the drug and gambling industries.",
+                    "narrSays": "Congratulations, you have destroyed the drug and gambling industries in Jooduh! What's next on the agenda?",
+                    "to": 1,
+                    "cond": {
+                        "status": {
+                            "idolsDestroyed": false
+                        }
+                    },
+                    "result": {
+                        "status": {
+                            "idolsDestroyed": true
+                        }
+                    }
+                },
+                {
+                    "userSays": "I want to get the church running again.",
+                    "narrSays": "Your secretary replies, \"The church hasn't been functioning for years! The doors of the church are broken and haven't been used for decades.\"\nIf only there was a way to fix the doors...",
+                    "cond": {
+                        "status": {
+                            "church": "doors"
+                        }
+                    }
+                },
+                {
+                    "userSays": "I want to get the church running again.",
+                    "narrSays": "Your secretary replies, \"Great work! The doors are now fixed, but we don't have a pastor to lead the church. If we could just find a pastor for the church, we could start the church again!\"\nHmmm... Where could I found a pastor?",
+                    "cond": {
+                        "status": {
+                            "church": "empty"
+                        }
+                    }
+                },
+                {
+                    "userSays": "I want to get the church running again.",
+                    "narrSays": "Your secretary replies, \"Excellent! You've managed to find a pastor! I'll setup advertising campaigns and start getting Jooduh back into churches. Great work Prime Minister Kiah!\"",
+                    "to": 1,
+                    "cond": {
+                        "status": {
+                            "church": "pastor"
+                        }
+                    }
+                },
+                {
+                    "desc": "Go back home",
+                    "narrSays": "You decide to go back home",
+                    "transition": "toHome"
+                }
+            ]
+        }
+    ]
+}

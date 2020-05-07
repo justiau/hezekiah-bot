@@ -3,83 +3,125 @@
     "dialogue": [
         {
             "prompt": "The park seems deserted, a relic of a forgotten age. The grass is long and discoloured, and the playground is filled with graffiti. You walk around trying to slowly come to some internal peace but you’re interrupted by a stranger coming towards you in the distance. You consider walking in the other direction but what kind of Prime Minister would do that? “Looking for some Milo man? I got plenty if you wanna.” He looked older than he was, the ripped black jeans and a pink faded hoodie covering his skeleton of a body. The boy looks disheveled, his hair wispy white, from stress, from living on the streets or just from the consumption of Milo, a brown unassuming powder that has plagued Jooduh for generations. You respond:",
-            "options": {
-                "a": {
+            "options": [
+                {
                     "userSays": "Yeah bro! Hit me with it baby.",
                     "transition": "toDrug"
                 },
-                "b": {
+                {
                     "userSays": "Why aren't you in school?",
                     "to": 1
                 },
-                "c": {
+                {
                     "userSays": "Where are your parents?",
                     "to": 1
                 }
-            }
+            ]
         },
         {
             "prompt":"The boy shrugs his shoulders and glances away. He isn’t getting what he looked for and he starts to shift away muttering something about his parents being addicted to the same substance and the schools being closed.",
-            "options": {
-                "a": {
+            "options": [
+                {
                     "desc": "You smack him for disrespecting the Prime Minister of the land.",
-                    "narrSays": "You decide to smack him for disrespecting the Prime Minister of the land.",
-                    "transition": "toAssault"
+                    "narrSays": "You decide to smack him for disrespecting the Prime Minister of the land. Despite his disheveled appearance, the boy was strong and overpowered you. He takes your wallet and runs off. You have lost $100.",
+                    "result": {
+                        "budget": -100,
+                        "defaultLandings": {
+                            "park": 3
+                        }
+                    },
+                    "to": 3
                 },
-                "b": {
-                    "userSays": "Hey, look, here’s some money for food but I don’t want no Milo",
-                    "to": 2
-                },
-                "c": {
-                    "userSays": "Have you heard about our Lord and saviour Jesus Christ?",
+                {
+                    "userSays": "I want to help you. What can I do?",
                     "to": 2
                 }
-            }
+            ]
         },
         {
-            "prompt": "The boy looks puzzled, he’s never encountered such a strange man. In his 16 years of roaming the streets, the playground being his home for nearly 5 years after his parents left him, this was different. This man was different. Who was he? Why was he so different? “What you want man I don’t want no trouble just get lost I… I… I’m just trying to earn myself a living here in this hellhole”. You feel a slight burst of fear, worried of what this boy could do, then you calm yourself and:",
-            "options": {
-                "a": {
-                    "userSays": "Come with me, I’ll take you to a rehab centre, it’ll be better for you and you can get yourself a new life",
-                    "to": 3,
-                    "updateDefaultLanding": {
-                        "park": 3
+            "prompt": "The boy responds, \"I want to fight this drug and addiction and go to school, but I don't have a textbook. Maybe if I had a textbook I would be able fight back against this addiction and actually go to school.\"\nIf only you had a textbook to give him...",
+            "options": [
+                {
+                    "userSays": "Here, I bought you a textbook.",
+                    "to": 4,
+                    "cond": {
+                        "items": {
+                            "textbook": {
+                                "quantity": 1
+                            }
+                        }
+                    },
+                    "result": {
+                        "takeItems": [
+                            "textbook"
+                        ]
                     }
                 },
-                "b": {
-                    "desc": "Buy him a textbook to start learning the drawbacks of Milo addiction",
-                    "cost": 20,
-                    "narrSays": "You decide to buy him a textbook to start learning the drawbacks of Milo addiction.",
-                    "to": 3,
-                    "updateDefaultLanding": {
-                        "park": 3
-                    }
-                },
-                "c": {
-                    "desc": "Hire a nanny for him that will look after his education, housing and wellbeing",
-                    "cost": 100,
-                    "narrSays": "You decide to hire a nanny for him that will look after his education, housing and wellbeing.",
-                    "to": 3,
-                    "updateDefaultLanding": {
-                        "park": 3
-                    }
+                {
+                    "desc": "Leave the boy and return home",
+                    "narrSays": "You decide to leave the boy alone for now and head home.",
+                    "transition": "toHome"
                 }
-            }
+            ]
         },
         {
             "prompt": "The park is now completely empty. Where would you like to go?",
-            "options": {
-                "a": {
-                    "desc": "Go to the library",
-                    "narrSays": "You decide to go to the library",
-                    "transition": "toLib"
-                },
-                "b": {
-                    "desc": "Go to the office",
-                    "narrSays": "You decide to go to the office",
-                    "transition": "toOff"
+            "options": [
+                {
+                    "desc": "Go home",
+                    "narrSays": "You decide to go home",
+                    "transition": "toHome"
                 }
-            }
+            ]
+        },
+        {
+            "prompt": "The boy lights up as you give him the textbook. \"Thanks so much Sir! I'm definitely going to go study now, trust!\"He happily takes the textbook, sits down nearby and starts studying. Let's not disturb him.",
+            "options": [
+                {
+                    "desc": "Go home",
+                    "narrSays": "You decide to go home",
+                    "transition": "toHome",
+                    "result": {
+                        "defaultLandings": {
+                            "park": 5
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "prompt": "You see Israel at the park reading the textbook. Let's not distract him.",
+            "options": [
+                {
+                    "desc": "Go home",
+                    "narrSays": "You decide to go home",
+                    "transition": "toHome"
+                }
+            ]
+        },
+        {
+            "prompt": "As you enter the park, Israel greets you warmly. \"Hi Mr. Kiah! How are you today?",
+            "options": [
+                {
+                    "userSays": "I'm great. We've reopened the church. Would you like to come?",
+                    "to": 7
+                }
+            ]
+        },
+        {
+            "prompt": "I sure would! I can't wait to learn more about Jesus! You have succesfully invited Israel along to church. The park is now empty.",
+            "options": [
+                {
+                    "desc": "Go home",
+                    "narrSays": "You decide to go home",
+                    "transition": "toHome",
+                    "result": {
+                        "defaultLandings": {
+                            "park": 3
+                        }
+                    }
+                }
+            ]
         }
     ]
 }
