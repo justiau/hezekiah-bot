@@ -75,7 +75,23 @@
                         "status": {
                             "church": "pastor"
                         }
+                    },
+                    "result": {
+                        "status": {
+                            "church": "complete"
+                        }
                     }
+                },
+                {
+                    "userSays": "I want to finish Act 1.",
+                    "narrSays": "You have succesfully completed Act 1. Good work!",
+                    "cond": {
+                        "status": {
+                            "church": "complete",
+                            "idolsDestroyed": true
+                        }
+                    },
+                    "transition": "toAct1Finish"
                 },
                 {
                     "desc": "Go back home",

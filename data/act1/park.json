@@ -54,7 +54,13 @@
                     "result": {
                         "takeItems": [
                             "textbook"
-                        ]
+                        ],
+                        "giveItems": [
+                            "hammer"
+                        ],
+                        "defaultLandings": {
+                            "park": 5
+                        }
                     }
                 },
                 {
@@ -75,17 +81,12 @@
             ]
         },
         {
-            "prompt": "The boy lights up as you give him the textbook. \"Thanks so much Sir! I'm definitely going to go study now, trust!\"He happily takes the textbook, sits down nearby and starts studying. Let's not disturb him.",
+            "prompt": "The boy lights up as you give him the textbook. \"Thanks so much Sir! I'm definitely going to go study now, trust! I don't have money to repay you but I just so happen to have this really cool hammer. Here take it.\" He happily takes the textbook, sits down nearby and starts studying. Let's not disturb him.",
             "options": [
                 {
                     "desc": "Go home",
                     "narrSays": "You decide to go home",
-                    "transition": "toHome",
-                    "result": {
-                        "defaultLandings": {
-                            "park": 5
-                        }
-                    }
+                    "transition": "toHome"
                 }
             ]
         },

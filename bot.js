@@ -72,7 +72,7 @@ async function handleUser(message) {
             let method;
             if (urlObj.hostname === null) {
                 queryStr = args.slice(1).join(' ');
-                item = cState.getItem(queryStr);
+                item = cState.getShopItem(queryStr);
                 method = "local";
             } else {
                 item = await scrape.getItem(args[1]);
@@ -134,56 +134,9 @@ async function handleUser(message) {
         case 'choose':
             if (args.length > 1) {
                 let choiceIndex = (args[1].length == 1) && (args[1].toLowerCase().charCodeAt(0) - 97);
-                // let choice = cState.dialogue[cState.index].options[args[1]];
                 let choice = cState.options[choiceIndex];
                 if (choice !== undefined) {
-                    // ensure transition is valid
-                    if (("transition" in choice) && (typeof(cState[choice.transition]) !== "function")) {
-                        sendEmbed("Selection: \"" + args[1] + "\" caused invalid transition: \"" + choice.transition + "\" which is not in " + cState.state + "\'s transitions: " + cState.transitions(), message.channel);
-                        cState.sendOptions();
-                        return;
-                    }
-                    // if choice has a cost attached to it
-                    if ("cost" in choice) {
-                        if (choice["cost"] <= cState.budget) {
-                            cState.updateBudget(-choice["cost"]);
-                            sendEmbed("Remaining budget: $" + cState.budget.toFixed(2), message.channel);
-                        } else {
-                            var fields = [{ name: "Option Cost", value: "$" + choice["cost"].toFixed(2) },{ name: "Current Budget", value: "$" + cState.budget.toFixed(2) }];
-                            sendEmbed("You have insufficient funds to select that option.", message.channel, "Selection Failed", fields);
-                            cState.sendOptions();
-                            return;
-                        }
-                    }
-                    if ("result" in choice) {
-                        if ("budget" in choice.result) {
-                            cState.updateBudget(choice.result.budget);
-                        }
-                        if ("takeItems" in choice.result) {
-                            choice.result.takeItems.forEach(takeItem => {
-                                cState.rmItem(takeItem)
-                            });
-                        }
-                        if ("status" in choice.result) {
-                            cState.updateStatus(choice.result.status);
-                        }
-                        if ("defaultLandings" in choice.result) {
-                            cState.updateLandings(choice.result.defaultLandings);
-                        }
-                    }
-                    let resultVal = ("narrSays" in choice) ? choice.narrSays : "\"" + choice.userSays + "\"";
-                    sendEmbed(resultVal,message.channel)
-                    if ("transition" in choice) {
-                        if ("landing" in choice) {
-                            cState[choice.transition](choice.landing);
-                        } else {
-                            cState[choice.transition]();
-                        }
-                    } else if ("to" in choice) {
-                        cState.choose(choice.to);
-                    } else {
-                        cState.sendOptions();
-                    }
+                    cState.choose(choice);
                 } else {
                     sendEmbed('Provided command was not in list of options.', message.channel);
                     cState.sendOptions();
@@ -191,13 +144,6 @@ async function handleUser(message) {
             } else {
                 sendEmbed('User did not specify an option to choose.', message.channel);
                 cState.sendOptions();
-            }
-            break;
-        case 'answer':
-            if (args.length > 1) {
-
-            } else {
-                sendEmbed('User did not provide an answer.\nAnswer usage: \"Question: "Who is the coolest??"\n`!answer justin`', message.channel)
             }
             break;
         case 'help':

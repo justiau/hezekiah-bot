@@ -32,11 +32,57 @@
             ]
         }, 
         {
-            "prompt": "You are now inside the church. There is nothing for you to do here. Where would you like to go?",
+            "prompt": "You are now inside the church. You see an old man sitting down looking slightly dejected. You go up to him and ask him:",
             "options": [
+                {
+                    "userSays": "What can I do for you? Are you alright?",
+                    "to": 2
+                },
                 {
                     "desc": "Go back home",
                     "narrSays": "You decide to go back home",
+                    "transition": "toHome"
+                }
+            ]
+        },
+        {
+            "prompt": "The old man looks up at you with a kind face, as if he hasn’t seen a person enter the church for years. He says “I’m the pastor here, I haven’t had many people come here in a long time. Who are you?” You reply “I’m Hector Kiah, the Prime Minister of Judah and I’m glad to have found you. I was hoping to find someone who would be able to help me rebuild this church!” The pastor frowns suspiciously at your enthusiasm, “Like I said, there hasn’t been anyone here in a long time. Why would anyone want to come here now?” waiting a second to comprehend the situation that the pastor is in he then says, “to test your sincerity, if you can answer these questions correctly I will help you with whatever plans you have. If you don’t answer all the questions correctly I’ll take $100 for each wrong question and give it to the church.\nWhat do you do?",
+            "options": [
+                {
+                    "desc": "Agree to the offer proposed by the Pastor and answer his questions",
+                    "narrSays": "You agree. Get ready, a quiz is about to start!",
+                    "transition": "toChurchQuiz",
+                    "result": {
+                        "defaultLandings": {
+                            "church": 4
+                        },
+                        "status": {
+                            "church": "pastor"
+                        }
+                    }
+                },
+                {
+                    "userSays": "Thank you for your offer, but I'm going to look somewhere else.",
+                    "transition": "toHome"
+                }
+            ]
+        },
+        {
+            "prompt": "The pastor sighs, \"Well alright. I'll join the church you're starting.\"\nCongratulations, your church now has a pastor! Where to next?",
+            "options": [
+                {
+                    "desc": "Go back home",
+                    "narrSays": "You decide to go back home.",
+                    "transition": "toHome"
+                }
+            ]
+        },
+        {
+            "prompt": "You enter the church and see Pastor Levi praying quietly in the corner. Let's not disturb him.",
+            "options": [
+                {
+                    "desc": "Go back home",
+                    "narrSays": "You decide to go back home.",
                     "transition": "toHome"
                 }
             ]

@@ -1,0 +1,62 @@
+{
+    "name": "churchQuiz",
+    "quiz": [
+        {
+            "question": "How old was Hezekiah when he became king and reigned in Jerusalem?",
+            "options": [
+                "20 years old",
+                "18 years old",
+                "13 years old",
+                "25 years old"
+            ],
+            "answer": "20 years old"
+        },
+        {
+            "question": "To how far did Hezekiah defeat the Philistines",
+            "options": [
+                "As far as Gaza",
+                "As far as Syria",
+                "As far as Egypt",
+                "As far as Hebron"
+            ],
+            "answer": "As far as Gaza"
+        },
+        {
+            "question": "What did Hezekiah do in the first month of the first year of his reign?",
+            "options": [
+                "Hezekiah held a coronation ceremony",
+                "Hezekiah did nothing",
+                "Hezekiah opened the doors of the temple of the Lord and repaired them",
+                "Hezekiah removed the high places, smashed the scared stones and cut down the Asherah poles"
+            ],
+            "answer": "Hezekiah opened the doors of the temple of the Lord and repaired them"
+        },
+        {
+            "question": "What did Hezekiah sacrifice unto the Lord after the temple was purified as a sin offering?",
+            "options": [
+                "Tons of pork",
+                "Seven bulls, seven rams, seven male lambs and seven male goats",
+                "Eight bulls, seven rams, eight male lambs and seven male goats",
+                "Seven bulls, seven rams, seven male lambs and twelve male goats"
+            ],
+            "answer": "Seven bulls, seven rams, seven male lambs and seven male goats"
+        },
+        {
+            "question": "What did Hezekiah invite Ephraim, Manasseh and Israel for?",
+            "options": [
+                "Hezekiah's coronation",
+                "The Passover",
+                "A battle against the Assyrians",
+                "Hezekiah's rad house party"
+            ],
+            "answer": "The Passover"
+        }
+    ],
+    "postQuiz": {
+        "transition": "toChurch",
+        "landing": 3,
+        "result": {
+            "eachIncorrect": -100
+        }
+    }
+}
