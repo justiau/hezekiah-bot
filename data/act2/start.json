@@ -1,0 +1,31 @@
+{
+    "name": "start",
+    "type": "dialogue",
+    "dialogue": [
+        {
+            "prompt": "A few years have past since you reopened the church and abolished the drug and gambling markets. But things aren't all perfect... The neighbouring country and rising power, \"A Serious State\", has surrounded the republic of Jooduh. What's the plan?",
+            "options": [
+                {
+                    "desc": "Go to the shops",
+                    "narrSays": "You decide to go to the shops",
+                    "transition": "toShop"
+                },
+                {
+                    "desc": "Go to church",
+                    "narrSays": "You decide to go to church",
+                    "transition": "toChurch"
+                },
+                {
+                    "desc": "Go to the recruitment centre",
+                    "narrSays": "You decide to go to the recruitment centre",
+                    "transition": "toRecruit"
+                },
+                {
+                    "desc": "Go to the office",
+                    "narrSays": "You decide to go to the office",
+                    "transition": "toOffice"
+                }
+            ]
+        }
+    ]
+}

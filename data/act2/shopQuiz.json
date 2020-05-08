@@ -1,0 +1,53 @@
+{
+    "name": "shopQuiz",
+    "type": "quiz",
+    "quiz": [
+        {
+            "question": "How much money did the Assyrian King gain from Hezekiah?",
+            "options": [
+                "$20",
+                "Three hundred talents of silver and thirty talents of gold",
+                "5kg of gold",
+                "Two hundred talents of silver and fifty talents of gold"
+            ],
+            "answer": "Three hundred talents of silver and thirty talents of gold"
+        },
+        {
+            "question": "How many Assyrians died when the angel of the Lord went out?",
+            "options": [
+                "185,000",
+                "18,500",
+                "100,000",
+                "190,000"
+            ],
+            "answer": "185,000"
+        },
+        {
+            "question": "What did Eliakim, Shebna and Joah do?",
+            "options": [
+                "They ran to help the Assyrians",
+                "They helped each other commit suicide",
+                "They prayed to Baal",
+                "They told King Hezekiah what the field commander had said"
+            ],
+            "answer": "They told King Hezekiah what the field commander had said"
+        },
+        {
+            "question": "What language did Eliakim, Shebna and Joah prefer the field commander to speak?",
+            "options": [
+                "Egyptian",
+                "Persian",
+                "Latin",
+                "Aramaic"
+            ],
+            "answer": "Aramaic"
+        }
+    ],
+    "postQuiz": {
+        "transition": "toShop",
+        "result": {
+            "eachcorrect": 100
+        },
+        "text": "After answering their questions, the reporters disperse. They have given you $100 for each question you answered correctly."
+    }
+}

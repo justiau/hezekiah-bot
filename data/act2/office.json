@@ -1,0 +1,103 @@
+{
+    "name": "office",
+    "type": "dialogue",
+    "dialogue": [
+        {
+            "prompt": "Your secretary greets your as you enter the office.\n\"Hi Hector, what would you like to get done today? A Serious State has seized our forts and are attacking our capital city, what should we do?",
+            "options": [
+                {
+                    "userSays": "I'll just pay them off myself",
+                    "cost": 800,
+                    "narrSays": "You decide to pay them money to satisfy them",
+                    "transition": "toHome",
+                    "landing": 1,
+                    "result": {
+                        "defaultLandings": {
+                            "office": 1
+                        }
+                    }
+                },
+                {
+                    "userSays": "Let's tear down the newly refurbished church and give them the materials to pay them off",
+                    "narrSays": "\"Unfortunately, the demolition team requires tools to take the church down.\"",
+                    "cond": {
+                        "status": {
+                            "demolition": "none"
+                        }
+                    }
+                },
+                {
+                    "userSays": "Let's tear down the newly refurbished church and give them the materials to pay them off",
+                    "narrSays": "\"Good work on getting the demolition team the crow bar! I'll tell the demolition team to go ahead.\"\nYou have successfully repelled the first attack of A Serious Slate.",
+                    "cond": {
+                        "status": {
+                            "demolition": "crowbar"
+                        }
+                    },
+                    "result": {
+                        "defaultLandings": {
+                            "office": 1
+                        },
+                        "status": {
+                            "demolition": "finished"
+                        }
+                    },
+                    "transition": "toHome",
+                    "landing": 1
+                },
+                {
+                    "userSays": "I can't decide! I'm just going home.",
+                    "narrSays": "You decide to go home",
+                    "transition": "toHome"
+                }
+            ]
+        },
+        {
+            "prompt": "As you approach the office, your secretary, frantically rushes you through the doors, her hair disheveled from stress and eyes heavy from lack of sleep. \"AUEHIFAUHEFUJABN HECTORR! A Serious State has attacked again! They have come back with a much larger army than last time. What should we do?\"",
+            "options": [
+                {
+                    "userSays": "We need to find that old prophet dude 'Eyes-Eye Ah', I'm sure he'll know a way out of this mess!",
+                    "narrSays": "Your secretary replies, \"We've organised a search team for him but for some reason they don't have any flash lights! We won't be able to find Eyes-Eye Ah unless we can get the search team some flash lights.\"",
+                    "cond": {
+                        "status": {
+                            "search": "none"
+                        }
+                    }
+                },
+                {
+                    "userSays": "We need to find that old prophet dude 'Eyes-Eye Ah', I'm sure he'll know a way out of this mess!",
+                    "narrSays": "Your secretary replies, \"The search team has flashlights now! Excellent! I'll get them looking right away!\"\nA few hours later your secretary bursts into the office. \"We've found Eyes-Eye Ah! He's in the forest! Come on Hector, get going!\"",
+                    "cond": {
+                        "status": {
+                            "search": "flashlight"
+                        }
+                    },
+                    "result": {
+                        "status": {
+                            "search": "found"
+                        }
+                    }
+                },
+                {
+                    "userSays": "We need to find 'Eyes-Eye Ah!'",
+                    "narrSays": "Your secretary replies, \"The search team has found him! He's in the forest. Go quick!!\"",
+                    "cond": {
+                        "status": {
+                            "search": "found"
+                        }
+                    }
+                },
+                {
+                    "userSays": "Yooo let's kill 'em dead ayee",
+                    "narrSays": "\"Yessir! We'll muster up some troops and do our absolute best to uh 'kill em dead'.\"",
+                    "transition": "toWar"
+                },
+                {
+                    "desc": "Go back home.",
+                    "narrSays": "You decide to go back home",
+                    "transition": "toHome"
+                }
+            ]
+        }
+    ]
+}

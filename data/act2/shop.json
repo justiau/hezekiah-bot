@@ -1,0 +1,41 @@
+{
+    "name": "shop",
+    "type": "dialogue",
+    "dialogue": [
+        {
+            "prompt": "As you approach the shops, you are stopped by a large crowd of reporters.\n\"Excuse me Prime Minister Kiah, Do you have time to answer a few questions?\"\nIt looks like you won't able to get to the store until you answer their questions...\nWhat do you want to do?",
+            "options": [
+                {
+                    "desc": "Answer their questions",
+                    "narrSays": "You decide to answer their questions.",
+                    "transition": "toShopQuiz",
+                    "result": {
+                        "defaultLandings": {
+                            "shop": 1
+                        }
+                    }
+                },
+                {
+                    "desc": "Go back home",
+                    "narrSays": "You decide to go back home",
+                    "transition": "toHome"
+                }
+            ]
+        },
+        {
+            "prompt": "You arrive at the shops. The following items are available for purchase.\nUsage: `!buy paintbrush`.",
+            "items": {
+                "crowbar": 60,
+                "flashlight": 17.61,
+                "the swan princess trilogy": 171
+            },
+            "options": [
+                {
+                    "desc": "Go back home",
+                    "narrSays": "You decide to return home",
+                    "transition": "toHome"
+                }
+            ]
+        }
+    ]
+}

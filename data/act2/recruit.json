@@ -1,0 +1,60 @@
+{
+    "name": "recruit",
+    "type": "dialogue",
+    "dialogue": [
+        {
+            "prompt": "You arrive at a recruitment centre to source people for jobs.",
+            "options": [
+                {
+                    "desc": "Give them a crowbar",
+                    "narrSays": "You give them a crowbar.",
+                    "cond": {
+                        "items": {
+                            "crowbar": {
+                                "quantity": 1
+                            }
+                        },
+                        "status": {
+                            "demolition": "none"
+                        }
+                    },
+                    "result": {
+                        "status": {
+                            "demolition": "crowbar"
+                        },
+                        "takeItems": [
+                            "crowbar"
+                        ]
+                    }
+                },
+                {
+                    "desc": "Give them a flashlight",
+                    "narrSays": "You give them a flashlight.",
+                    "cond": {
+                        "items": {
+                            "flashlight": {
+                                "quantity": 1
+                            }
+                        },
+                        "status": {
+                            "search": "none"
+                        }
+                    },
+                    "result": {
+                        "status": {
+                            "search": "flashlight"
+                        },
+                        "takeItems": [
+                            "flashlight"
+                        ]
+                    }
+                },
+                {
+                    "desc": "Go back home",
+                    "narrSays": "You decide to go back home",
+                    "transition": "toHome"
+                }
+            ]
+        }
+    ]
+}

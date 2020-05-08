@@ -1,0 +1,66 @@
+{
+    "name": "home",
+    "type": "dialogue",
+    "dialogue": [
+        {
+            "prompt": "You arrive back home. \nShouldn't you be working? Jooduh isn't going to defend itself.",
+            "options": [
+                {
+                    "desc": "Go to the shops",
+                    "narrSays": "You decide to go to the shops",
+                    "transition": "toShop"
+                },
+                {
+                    "desc": "Go to church",
+                    "narrSays": "You decide to go to church",
+                    "transition": "toChurch"
+                },
+                {
+                    "desc": "Go to the recruitment centre",
+                    "narrSays": "You decide to go to the recruitment centre",
+                    "transition": "toRecruit"
+                },
+                {
+                    "desc": "Go to the office",
+                    "narrSays": "You decide to go to the office",
+                    "transition": "toOffice"
+                },
+                {
+                    "desc": "Go to the forest",
+                    "narrSays": "You decide to go to the forest",
+                    "transition": "toForest",
+                    "cond": {
+                        "status": {
+                            "search": "found"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "prompt": "You arrive back at home after succesfully repelling the attack. Boy being a Prime Minster sure is tough!\nYou catch the last few minutes of \"Star Wars: The Clone Wars\" before deciding to get some well deserved rest.\nBut you wake up the next morning to 56 missed calls! A Serious State has attacked again! And it seems like this time, money won't be enough to make them go away...",
+            "options": [
+                {
+                    "desc": "Go to the shops",
+                    "narrSays": "You decide to go to the shops",
+                    "transition": "toShop"
+                },
+                {
+                    "desc": "Go to church",
+                    "narrSays": "You decide to go to church",
+                    "transition": "toChurch"
+                },
+                {
+                    "desc": "Go to the recruitment centre",
+                    "narrSays": "You decide to go to the recruitment centre",
+                    "transition": "toRecruit"
+                },
+                {
+                    "desc": "Go to the office",
+                    "narrSays": "You decide to go to the office",
+                    "transition": "toOffice"
+                }
+            ]
+        }
+    ]
+}

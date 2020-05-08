@@ -1,0 +1,16 @@
+{
+    "name": "war",
+    "type": "dialogue",
+    "dialogue": [
+        {
+            "prompt": "You manage to muster up a small army to fight against A Serious State. Jooduh is completely crushed and all die. Yikes.",
+            "options": [
+                {
+                    "desc": "Restart from Act 2",
+                    "narrSays": "Restarting...",
+                    "transition": "toStart"
+                }
+            ]
+        }
+    ]
+}

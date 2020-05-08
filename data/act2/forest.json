@@ -1,0 +1,95 @@
+{
+    "name": "forest",
+    "type": "dialogue",
+    "dialogue": [
+        {
+            "prompt": "You rush to the forest and see Eyes-Eye Ah meditating quietly on a log.",
+            "options": [
+                {
+                    "userSays": "OIII WHAT ARE YOU DOING YOU DINGUS?? WE NEED HELP!",
+                    "to": 1
+                },
+                {
+                    "userSays": "...Excuse me, Mr. Eyes-Eye Ah?..",
+                    "narrSays": "The old man doesn't seem to hear you... He's completely entranced in his meditation."
+                },
+                {
+                    "userSays": "THERE'S A FIRE!!! RUN RUN RUN!!!",
+                    "narrSays": "You shout that there's a fire to get his attention",
+                    "to": 1
+                }
+            ]
+        },
+        {
+            "prompt": "Eyes-Eye Ah leaps to his feet as if death itself had touched him. Realising that there was no imminent danger or fire around him, he relaxed and turned to face Hector.\n\"Hector you liar! What do you want from me?\"",
+            "options": [
+                {
+                    "userSays": "We need your help with Ayseerio! They've surrounded Jooduh and are coming for our lives next!",
+                    "to": 2
+                }
+            ]
+        },
+        {
+            "prompt": "\"It's alright, God is OP, trust. All you gotta do is pray.\"",
+            "options": [
+                {
+                    "desc": "Pray",
+                    "narrSays": "You decide to pray to God. Great choice!",
+                    "to": 3
+                },
+                {
+                    "desc": "Don't pray",
+                    "narrSays": "You decide not to pray",
+                    "to": 4
+                }
+            ]
+        },
+        {
+            "prompt": "You pray: \"Lord, the God of Jooduh, enthroned between the cherubim, you alone are God over all the kingdoms of the earth. You have made heaven and earth. Give ear, Lord, and hear; open your eyes, Lord, and see; listen to the words Aysirio has sent to ridicule the living God. It is true, Lord, that the Aysirion kings have laid waste these nations and their lands. They have thrown their gods into the fire and destroyed them, for they were not gods but only wood and stone, fashioned by human hands. Now, Lord our God, deliver us from his hand, so that all the kingdoms of the earth may know that you alone, Lord, are God.\"\nGod hears your prayer and the mighty Angel of the Lord wipes out the army of Aysirio.",
+            "options": [
+                {
+                    "desc": "Finish Act 2",
+                    "narrSays": "You have succesfully completed Act 2. Great work!",
+                    "transition": "toFinish"
+                }
+            ]
+        },
+        {
+            "prompt": "Narrator: \"Are you sure..?\"",
+            "options": [
+                {
+                    "userSays": "Absolutely! I don't need to pray.",
+                    "to": 5
+                },
+                {
+                    "userSays": "Fine! I'll pray.",
+                    "to": 3
+                }
+            ]
+        },
+        {
+            "prompt": "Narrator: \"Dude legit please just pray\"",
+            "options": [
+                {
+                    "userSays": "NOOOOOOOOOOOOOOOOOO",
+                    "to": 6
+                },
+                {
+                    "userSays": "FINEEEEEEEEEEEEEEEE",
+                    "to": 3
+                }
+            ]
+        },
+        {
+            "prompt": "FOR SOME REASON you decide not to pray. Jooduh is completely destroyed and you perish along with it.",
+            "options": [
+                {
+                    "desc": "Restart from Act 2",
+                    "narrSays": "Restarting...",
+                    "transition": "toStart"
+                }
+            ]
+        }
+    ]
+    
+}

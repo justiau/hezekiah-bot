@@ -4,13 +4,12 @@ const urlLib = require('url');
 
 const auth = require('./auth.json');
 var commands = require('./commands.json')
-
 var util = require('./util');
 var scrape = require('./scrape');
-var fsmLib = require('./fsm');
+
+var {act1Factory, act2Factory, act3Factory} = require('./fsm');
 
 let sendEmbed = util.sendEmbed;
-let FSM = fsmLib.fsmFactory;
 
 var channelStates = {}
 // id is for mr swaglord22
@@ -32,7 +31,7 @@ function handleAdmin(message) {
         case 'start':
             message.guild.channels.cache.forEach(channel => {
                 if (channel.type !== "text") return;
-                channelStates[channel.id] = new FSM(channel);
+                channelStates[channel.id] = new act1Factory(channel);
             })
             break;
         case 'show':
@@ -60,6 +59,17 @@ async function handleUser(message) {
     switch(args[0].toLowerCase()) {
         case 'ping':
             sendEmbed('justin is the best', message.channel);
+            break;
+        case 'begin':
+            if (cState.state == "finish") {
+                if (cState.act == 0) {
+                    channelStates[message.channel.id] = new act2Factory(cState.channel, cState.budget, cState.items);
+                } else if (cState.act == 1) {
+                    channelStates[message.channel.id] = new act3Factory(cState.channel, cState.budget, cState.items);
+                } else {
+                    console.log("begin called in act 3 or unknown act");
+                }
+            }
             break;
         case 'buy':
             if (args.length < 2) {

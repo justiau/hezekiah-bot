@@ -92,7 +92,7 @@
                             "idolsDestroyed": true
                         }
                     },
-                    "transition": "toAct1Finish"
+                    "transition": "toFinish"
                 },
                 {
                     "desc": "Go back home",
