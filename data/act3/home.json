@@ -1,0 +1,123 @@
+{
+    "name": "home",
+    "type": "dialogue",
+    "dialogue": [
+        {
+            "prompt": "You arrive back home.\nThe sickness has taken a heavy toll on your body and the warm comfort of your bed could not have been more tempting.\nThe medicine recipe won't build itself! Eyes-Eye Ah's recipe requires mushrooms, a stove and some cloth.\nThe local doctor's recipe requires a ball of yarn, apples and a pot.",
+            "options": [
+                {
+                    "desc": "Go to the shop",
+                    "narrSays": "You decide to go to the shops",
+                    "transition": "toShop"
+                },
+                {
+                    "desc": "Go to the forest",
+                    "narrSays": "You decide to go to the forest",
+                    "transition": "toForest"
+                },
+                {
+                    "desc": "Go to the internet cafe",
+                    "narrSays": "You decide to go to the internet cafe",
+                    "transition": "toInternet"
+                },
+                {
+                    "desc": "Call Eyes-Eye Ah",
+                    "narrSays": "Eyes-Eye Ah picks up. \"Great work on collecting all the ingredients! I'll make you some yummy mushroom cloth soup and by the power of God you'll be all better!\"",
+                    "cond": {
+                        "items": {
+                            "mushrooms": {
+                                "quantity": 1
+                            },
+                            "piece of cloth": {
+                                "quantity": 1
+                            }
+                        },
+                        "product": [
+                            "grill",
+                            "stove"
+                        ]
+                    },
+                    "result": {
+                        "defaultLandings": {
+                            "home": 2
+                        },
+                        "takeItems": [
+                            "mushrooms",
+                            "piece of cloth"
+                        ]
+                    },
+                    "to": 2
+                },
+                {
+                    "desc": "Call the doctor",
+                    "narrSays": "The doctors pick up. \"Great work on collecting all the ingredients! I'll make you a nice big pot of yummy apple yarn soup and through the magic of science you'll be all better!\"",
+                    "cond": {
+                        "items": {
+                            "ball of yarn": {
+                                "quantity": 1
+                            },
+                            "apples": {
+                                "quantity": 1
+                            }
+                        },
+                        "product": [
+                            "pot",
+                            "baking dish",
+                            "pan"
+                        ]
+                    },
+                    "to": 1,
+                    "result": {
+                        "defaultLandings": {
+                            "home": 2
+                        },
+                        "takeItems": [
+                            "apples",
+                            "ball of yarn"
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "prompt": "The doctors arrive at your house and brew quite the concoction of apple yarn soup. It tastes horrible and makes you feel even worse.",
+            "options": [
+                {
+                    "desc": "Call Eyes-Eye Ah",
+                    "narrSays": "You decide to call Eyes-Eye Ah. He rushes over and feeds you his very own mushroom cloth soup.\nIt also tastes horrible but atleast it makes you feel better.",
+                    "to": 2
+                },
+                {
+                    "desc": "Accept your fate",
+                    "narrSays": "Sick of your arrogance, Eyes-Eye Ah suddenly rocks up to your house and feeds you his very own mushroom cloth soup.\nIt also tastes horrible but actually makes you feel better.",
+                    "to": 2
+                }
+            ]
+        },
+        {
+            "prompt": "A few days after drinking Eyes-Eye Ah's home remedy, and by the mighty hand of God, you are all better.\nBut your troubles haven't ended yet! You hear that the Federation of Babylonia is sending over some diplomats to celebrate your good health. You must ensure that you have everything you need to entertain the ambassador of the Federation and display the wealth and pride of Jooduh.\nThe Federation of Babylonia are known to be real lovers of round numbers. \n**The closer to 0 your final budget is the more pleased they will be.**",
+            "options": [
+                {
+                    "desc": "Go to the shop",
+                    "narrSays": "You decide to go to the shops",
+                    "transition": "toShop"
+                },
+                {
+                    "desc": "Go to the forest",
+                    "narrSays": "You decide to go to the forest",
+                    "transition": "toForest"
+                },
+                {
+                    "desc": "Go to the internet cafe",
+                    "narrSays": "You decide to go to the internet cafe",
+                    "transition": "toInternet"
+                },
+                {
+                    "desc": "Meet the Babylonian Diplomats",
+                    "narrSays": "You decide that it's time to greet the diplomats",
+                    "transition": "toFinish"
+                }
+            ]
+        }
+    ]
+}

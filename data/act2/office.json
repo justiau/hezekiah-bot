@@ -3,7 +3,7 @@
     "type": "dialogue",
     "dialogue": [
         {
-            "prompt": "Your secretary greets your as you enter the office.\n\"Hi Hector, what would you like to get done today? A Serious State has seized our forts and are attacking our capital city, what should we do?",
+            "prompt": "Your secretary greets you as you enter the office.\n\"Hi Hector, what would you like to get done today? A Serious State has seized our forts and are attacking our capital city, what should we do?",
             "options": [
                 {
                     "userSays": "I'll just pay them off myself",
@@ -19,7 +19,7 @@
                 },
                 {
                     "userSays": "Let's tear down the newly refurbished church and give them the materials to pay them off",
-                    "narrSays": "\"Unfortunately, the demolition team requires tools to take the church down.\"",
+                    "narrSays": "Your secretary replies, \"Unfortunately, the demolition team requires tools to take the church down.\"",
                     "cond": {
                         "status": {
                             "demolition": "none"
@@ -28,7 +28,7 @@
                 },
                 {
                     "userSays": "Let's tear down the newly refurbished church and give them the materials to pay them off",
-                    "narrSays": "\"Good work on getting the demolition team the crow bar! I'll tell the demolition team to go ahead.\"\nYou have successfully repelled the first attack of A Serious Slate.",
+                    "narrSays": "Your secretary replies, \"Good work on getting the demolition team the crow bar! I'll tell the demolition team to go ahead.\"\nYou have successfully repelled the first attack of A Serious Slate.",
                     "cond": {
                         "status": {
                             "demolition": "crowbar"
@@ -36,7 +36,8 @@
                     },
                     "result": {
                         "defaultLandings": {
-                            "office": 1
+                            "office": 1,
+                            "church": 5
                         },
                         "status": {
                             "demolition": "finished"

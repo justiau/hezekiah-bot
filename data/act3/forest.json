@@ -1,0 +1,184 @@
+{
+    "name": "forest",
+    "type": "dialogue",
+    "dialogue": [
+        {
+            "prompt": "You walk into the forest and see that it is filled with usable ingredients. Perfect!",
+            "options": [
+                {
+                    "desc": "Pick up the mushrooms",
+                    "narrSays": "You decide to pick up the mushrooms.\nAs you go to pick one up, you remember what your mum would always say, \"Don't pick up random mushrooms on the ground lol.\"\nHmmmmm, better find a tool to collect the mushrooms with.",
+                    "cond": {
+                        "status": {
+                            "heal": "God"
+                        }
+                    }
+                },
+                {
+                    "desc": "Pick up some apples",
+                    "narrSays": "You decide to take some apples from the apple tree. \nThe apples haven't fallen yet and none are within reach. As you go to climb the tree, you remember what your mum would always say, \"Don't climb trees.\"\nHmmmmm, better find a tool to collect the apples with.",
+                    "cond": {
+                        "status": {
+                            "heal": "man"
+                        }
+                    }
+                },
+                {
+                    "desc": "Use the sickle to harvest the mushrooms",
+                    "narrSays": "You decide to use your trusty new sickle to harvest the mushrooms",
+                    "to": 1,
+                    "cond": {
+                        "status": {
+                            "ranger": true,
+                            "heal": "God"
+                        },
+                        "items": {
+                            "sickle": {
+                                "quantity": 1
+                            }
+                        }
+                    }
+                },
+                {
+                    "desc": "Use the sickle to harvest the mushrooms",
+                    "narrSays": "You decide to use your trusty new sickle to harvest the mushrooms",
+                    "to": 4,
+                    "cond": {
+                        "status": {
+                            "ranger": false,
+                            "heal": "God"
+                        },
+                        "items": {
+                            "sickle": {
+                                "quantity": 1
+                            }
+                        }
+                    },
+                    "result": {
+                        "giveItems": [
+                            {"name": "mushrooms"}
+                        ],
+                        "defaultLandings": {
+                            "forest": 5
+                        }
+                    }
+                },
+                {
+                    "desc": "Use the sickle to fetch the apples",
+                    "narrSays": "You decide to use your trusty new sickle to harvest the apples",
+                    "to": 2,
+                    "cond": {
+                        "status": {
+                            "ranger": true,
+                            "heal": "man"
+                        },
+                        "items": {
+                            "sickle": {
+                                "quantity": 1
+                            }
+                        }
+                    }
+                },
+                {
+                    "desc": "Use the sickle to fetch the apples",
+                    "narrSays": "You decide to use your trusty new sickle to harvest the apples",
+                    "to": 3,
+                    "cond": {
+                        "status": {
+                            "ranger": false,
+                            "heal": "man"
+                        },
+                        "items": {
+                            "sickle": {
+                                "quantity": 1
+                            }
+                        }
+                    },
+                    "result": {
+                        "giveItems": [
+                            {"name": "apples"}
+                        ],
+                        "defaultLandings": {
+                            "forest": 5
+                        }
+                    }
+                },
+                {
+                    "desc": "Go back home",
+                    "narrSays":"You decide to go back home",
+                    "transition": "toHome"
+                }
+            ]
+        },
+        {
+            "prompt": "As you prepare your sickle, you encounter a forest ranger. “Stop!” he shouts, “Who are you? You are trespassing on official Jooduh land. None of this land may be used for farming. Put that sickle away!” Startled you say “I am Hector Kiah the Prime Minister of this place please, I have been told that I will die soon can you please let me farm some mushrooms? My faithful advisors have said that unless I get these mushrooms I will die.” The ranger looks startled at the authority of the person he has met and the situation you are in “Alright, I’ll let you get some mushrooms. But you’ll need to prove that you are Hector Kiah the Prime Minister. I’ll ask you some questions and for each incorrect answer, I will fine you $200 for trespass and illegal gathering.",
+            "options": [
+                {
+                    "desc": "Take the ranger up on his offer",
+                    "narrSays": "You decide to answer his questions",
+                    "transition": "toForestQuiz",
+                    "result": {
+                        "status": {
+                            "ranger": false
+                        }
+                    }
+                },
+                {
+                    "desc": "Go back home",
+                    "narrSays": "You decide to go back home",
+                    "transitions": "toHome"
+                }
+            ]
+        },
+        {
+            "prompt": "As you prepare your sickle, you encounter a forest ranger. “Stop!” he shouts, “Who are you? You are trespassing on official Jooduh land. None of this land may be used for farming. Put that sickle away!” Startled you say “I am Hector Kiah the Prime Minister of this place please, I have been told that I will die soon can you please let me take some apples? My doctors tell me that unless I get some apples I will die.” The ranger looks startled at the authority of the person he has met and the situation you are in “Alright, I’ll let you get take some apples. But you’ll need to prove that you are Hector Kiah the Prime Minister. I’ll ask you some questions and for each incorrect answer, I will fine you $200 for trespass and illegal gathering.",
+            "options": [
+                {
+                    "desc": "Take the ranger up on his offer",
+                    "narrSays": "You decide to answer his questions",
+                    "transition": "toForestQuiz",
+                    "result": {
+                        "status": {
+                            "ranger": false
+                        }
+                    }
+                },
+                {
+                    "desc": "Go back home",
+                    "narrSays": "You decide to go back home",
+                    "transitions": "toHome"
+                }
+            ]
+        },
+        {
+            "prompt": "With no disturbing ranger around, you harvest the mushrooms with a quick and efficient precision.\nYou have obtained the apples!",
+            "options": [
+                {
+                    "desc": "Go back home",
+                    "narrSays": "You decide to go back home",
+                    "transition": "toHome"
+                }
+            ]
+        },
+        {
+            "prompt": "With no disturbing ranger around, you collect the applies with a quick and efficient precision.\nYou have obtained the mushrooms!",
+            "options": [
+                {
+                    "desc": "Go back home",
+                    "narrSays": "You decide to go back home",
+                    "transition": "toHome"
+                }
+            ]
+        },
+        {
+            "prompt": "You arrive at the forest. You enjoy the tranquility of nature for a peaceful few moments.\nWe don't have all day Hector!",
+            "options": [
+                {
+                    "desc": "Go back home",
+                    "narrSays": "You decide to go back home",
+                    "transition": "toHome"
+                }
+            ]
+        }
+    ]
+}

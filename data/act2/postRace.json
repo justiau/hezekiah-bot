@@ -1,0 +1,37 @@
+{
+    "name": "postRace",
+    "type": "dialogue",
+    "dialogue": [
+        {
+            "prompt": "You arrive at Jarred's house tired but resoundingly triumphant.\"A very exasperated Jarred enters a few minutes later.\n\"Incredible! You're too fast!\"\n\"Anyone what can I do for you?",
+            "options": [
+                {
+                    "userSays": "I'm looking for flashlights",
+                    "narrSays": "You ask Jarred for flashlights. \"Flashlights? In this part of town **we actually call them 'sthgilhsalf'**. Anyway I have a few spare, here you go!\"",
+                    "result": {
+                        "items": {
+                            "sthgilhsalf": {
+                                "quantity": 1
+                            }
+                        }
+                    }
+                },
+                {
+                    "desc": "Go back home",
+                    "narrSays": "You decide to go back home",
+                    "transition": "toHome"
+                }
+            ]
+        },
+        {
+            "prompt": "At last you arrive exasperated at Jarred's house. Jarred doesn't even seem to be sweating.\nHe welcomes you into his home anyway but you can feel his disappointment in you nonetheless.",
+            "options": [
+                {
+                    "desc": "Go back home",
+                    "narrSays": "You decide to go back home",
+                    "transition": "toHome"
+                }
+            ]
+        }
+    ]
+}

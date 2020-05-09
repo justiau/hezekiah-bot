@@ -30,7 +30,7 @@
             ]
         },
         {
-            "prompt": "\"It's alright, God is OP, trust. All you gotta do is pray.\"",
+            "prompt": "The old prophet replies, \"Relax! Everything is going to be OK. Pray to God and he will deliver you.\"",
             "options": [
                 {
                     "desc": "Pray",
@@ -45,7 +45,7 @@
             ]
         },
         {
-            "prompt": "You pray: \"Lord, the God of Jooduh, enthroned between the cherubim, you alone are God over all the kingdoms of the earth. You have made heaven and earth. Give ear, Lord, and hear; open your eyes, Lord, and see; listen to the words Aysirio has sent to ridicule the living God. It is true, Lord, that the Aysirion kings have laid waste these nations and their lands. They have thrown their gods into the fire and destroyed them, for they were not gods but only wood and stone, fashioned by human hands. Now, Lord our God, deliver us from his hand, so that all the kingdoms of the earth may know that you alone, Lord, are God.\"\nGod hears your prayer and the mighty Angel of the Lord wipes out the army of Aysirio.",
+            "prompt": "You pray: \"Lord, the God of Jooduh, enthroned between the cherubim, you alone are God over all the kingdoms of the earth. You have made heaven and earth. Give ear, Lord, and hear; open your eyes, Lord, and see; listen to the words A Serious State has sent to ridicule the living God. It is true, Lord, that the A Serious State kings have laid waste these nations and their lands. They have thrown their gods into the fire and destroyed them, for they were not gods but only wood and stone, fashioned by human hands. Now, Lord our God, deliver us from his hand, so that all the kingdoms of the earth may know that you alone, Lord, are God.\"\nGod hears your prayer and the mighty Angel of the Lord wipes out the army of A Serious State.",
             "options": [
                 {
                     "desc": "Finish Act 2",

@@ -1,0 +1,71 @@
+{
+    "name": "start",
+    "type": "dialogue",
+    "dialogue": [
+        {
+            "prompt": "You wake up in the morning feeling terrible! There is aching all over your body and your head feels like its about to explode. Unable to determine what's going on, you call Eyes-Eye Ah to ask him if he knows what's happening. Eyes-Eye Ah responds, “You should write a will and get your estate in order, you are going to die soon.” Your heart sinks. You slowly put the phone down. What a start to the day.",
+            "options": [
+                {
+                    "desc": "Pray to God",
+                    "narrSays": "You decide to pray to God",
+                    "to": 1,
+                    "result": {
+                        "status": {
+                            "heal": "God"
+                        }
+                    }
+                },
+                {
+                    "desc": "Rely on doctors to try and make you better",
+                    "narrSays": "You decide to trust the local doctors to heal you",
+                    "to": 2,
+                    "result": {
+                        "status": {
+                            "heal": "man"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "prompt": "As you finish praying to God, Eyes-Eye Ah calls you up again and says “Hector, I know what will make you better, get some mushrooms, some cloth, with a stove to heat it up and I will come over and by God’s miraculous power you should get better. Oh and one last thing, make sure that whatever you buy, they all need to be different and special” Rejuvenated by this new found hope, you immediately spring out of bed and try to look for the items that Eyes-Eye Ah asked of you.",
+            "options": [
+                {
+                    "desc": "Go to the shop",
+                    "narrSays": "You decide to go to the shops",
+                    "transition": "toShop"
+                },
+                {
+                    "desc": "Go to the forest",
+                    "narrSays": "You decide to go to the forest",
+                    "transition": "toForest"
+                },
+                {
+                    "desc": "Go to the internet cafe",
+                    "narrSays": "You decide to go to the internet cafe",
+                    "transition": "toInternet"
+                }
+            ]
+        },
+        {
+            "prompt": "The doctor looks at you and says “Your condition is quite severe and it seems that we will need some different medication to cure you. We need some apples, a ball of yarn and a pot for us to make you medication.” You feel enthusiastic that science has the answer to your problems and you decide to get up and try to find the ingredients for the medication.\nWhat do you do?",
+            "options": [
+                {
+                    "desc": "Go to the shop",
+                    "narrSays": "You decide to go to the shops",
+                    "transition": "toShop"
+                },
+                {
+                    "desc": "Go to the forest",
+                    "narrSays": "You decide to go to the forest",
+                    "transition": "toForest"
+                },
+                {
+                    "desc": "Go to the internet cafe",
+                    "narrSays": "You decide to go to the internet cafe",
+                    "transition": "toInternet"
+                }
+            ]
+        }
+    ]
+}

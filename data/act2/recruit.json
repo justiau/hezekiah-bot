@@ -28,11 +28,11 @@
                     }
                 },
                 {
-                    "desc": "Give them a flashlight",
-                    "narrSays": "You give them a flashlight.",
+                    "desc": "Give them the flashlights",
+                    "narrSays": "You give them the flashlights.",
                     "cond": {
                         "items": {
-                            "flashlight": {
+                            "sthgilhsalf": {
                                 "quantity": 1
                             }
                         },
@@ -45,7 +45,7 @@
                             "search": "flashlight"
                         },
                         "takeItems": [
-                            "flashlight"
+                            "sthgilhsalf"
                         ]
                     }
                 },

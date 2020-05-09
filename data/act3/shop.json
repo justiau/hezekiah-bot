@@ -1,0 +1,23 @@
+{
+    "name": "shop",
+    "type": "dialogue",
+    "dialogue": [
+        {
+            "prompt": "You arrive at the shops. The following items are available for purchase.\nUsage: `!buy paintbrush`.",
+            "items": {
+                "sickle": 100.16,
+                "powerpoint extender": 120.15,
+                "piece of cloth": 9.12,
+                "ball of yarn": 17.15,
+                "iCarly Season 7": 92.41
+            },
+            "options": [
+                {
+                    "desc": "Go back home",
+                    "narrSays": "You decide to return home",
+                    "transition": "toHome"
+                }
+            ]
+        }
+    ]
+}

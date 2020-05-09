@@ -69,6 +69,29 @@ async function handleUser(message) {
                 } else {
                     console.log("begin called in act 3 or unknown act");
                 }
+            } else if (cState.mode == "spam") {
+                sendEmbed("Race has started! Type and send `!" + cState.spamState.keyword + "` as many times as you can!",message.channel,"RACE STARTED");
+                cState.startSpam();
+            } else {
+                sendEmbed("This command is not available right now.")
+            }
+            break;
+        case 'act':
+            if (message.author.id != adminID) return;
+            if (args.length < 2) sendEmbed('Please specify an Act to go to.');
+            if (args[1] >= 1 && args[1] <= 3) {
+                console.log("Going to act: " + args[1])
+                switch(args[1]) {
+                    case "1":
+                        channelStates[message.channel.id] = new act1Factory(cState.channel);
+                        break;
+                    case "2":
+                        channelStates[message.channel.id] = new act2Factory(cState.channel);
+                        break;
+                    case "3":
+                        channelStates[message.channel.id] = new act3Factory(cState.channel);
+                        break;
+                }
             }
             break;
         case 'buy':
@@ -85,6 +108,10 @@ async function handleUser(message) {
                 item = cState.getShopItem(queryStr);
                 method = "local";
             } else {
+                if (cState.state != "internet" && cState.index != 1) {
+                    sendEmbed("You aren't connected to the internet right now!",message.channel,"Purchase Failed");
+                    return;
+                }
                 item = await scrape.getItem(args[1]);
                 method = "online";
             }
@@ -137,6 +164,12 @@ async function handleUser(message) {
                 sendEmbed('User did not specify an option to choose.', message.channel);
                 cState.sendOptions();
             }
+            break;
+        case 'options':
+            cState.sendOptions();
+            break;
+        case 'run':
+            if (cState.mode == "spam") cState.spamState.count++;
             break;
         case 'help':
             console.log(fields)

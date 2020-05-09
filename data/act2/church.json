@@ -1,0 +1,83 @@
+{
+    "name": "church",
+    "type": "dialogue",
+    "dialogue": [
+        {
+            "prompt": "You arrive at the church. Since restarting it a few years ago, the church has grown greatly in members.\nThere's an ABUNDANCE of prawn crackers and KFC on the tables.\nThe local youth group, \"Tiheelah\" are enjoying a WILD game of Hypocrisy.\nThe church RENOWNED amateur runner, Mr. Jarred Her approaches you.",
+            "options": [
+                {
+                    "userSays": "You like running? I LOOOOVE RUNNING!",
+                    "to": 1
+                },
+                {
+                    "userSays": "I'm looking for demolition equipment",
+                    "to": 2
+                },
+                {
+                    "userSays": "I'm looking for flashlights",
+                    "to":4
+                }
+            ]
+        },
+        {
+            "prompt": "Jarred beams with pride. \"Oh my word! You're a fellow runner? No wayyyy!\"I'll be running home from church, would you like to join me?",
+            "options": [
+                {
+                    "userSays": "Yes",
+                    "transition": "toRace"
+                },
+                {
+                    "userSays": "No",
+                    "narrSays": "\"No.\"\nJared sighs, \"SMH. Do you even love running? What do you want?\"",
+                    "to": 0
+                }
+            ]
+        },
+        {
+            "prompt": "Jarred frowns. \"Really? Demolition equipment? Why would you want that?\"",
+            "options": [
+                {
+                    "userSays": "Uhhhh... You don't need to know",
+                    "to": 0
+                },
+                {
+                    "userSays": "I need to demolish the church to pay off A Serious State.",
+                    "to": 3
+                }
+            ]
+        },
+        {
+            "prompt": "\"WHAT? You want to destroy the church?\nNot on my watch.\"\nJared looks at you with nothing but pure disgust. You can't go on like this.",
+            "options": [
+                {
+                    "desc": "Restart from Act 2",
+                    "narrSays": "Restarting..",
+                    "transition": "toStart"
+                }
+            ]
+        },
+        {
+            "prompt": "\"**Ahhh, flashlights you say? In this part of town we call them, 'sthgilhsalf'**. I think they sell them at the store...",
+            "options": [
+                {
+                    "desc": "Go back home",
+                    "narrSays": "You decide to go back home",
+                    "transition": "toHome"
+                }
+            ]
+        },
+        {
+            "prompt" : "You arrive at the church. If you can still call it that atleast. The building has been completely demolished, and many of the members scattered. For some reaosn, the RENOWNED amateur runner, Mr. Jarred Her is still around and approaches you.",
+            "options": [
+                {
+                    "userSays": "You like running? I LOOOOVE RUNNING!",
+                    "to": 1
+                },
+                {
+                    "userSays": "I'm looking for flashlights",
+                    "to":4
+                }
+            ]
+        }
+    ]
+}

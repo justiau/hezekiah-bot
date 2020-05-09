@@ -1,0 +1,43 @@
+{
+    "name": "internet",
+    "type": "dialogue",
+    "dialogue": [
+        {
+            "prompt": "You enter the internet cafe. Kids these days are always using online shopping. You go to the front desk and the manager says “Sorry mate, we’re full no more computers for you to use.” Disappointed you slowly walk out, then see a computer without a power source at the end of the room. If only you had something to extend the range of a powerpoint...",
+            "options": [
+                {
+                    "desc": "Use your powerpoint extender",
+                    "narrSays": "You decide to use your powerpoint extender",
+                    "to": 1,
+                    "cond": {
+                        "items": {
+                            "powerpoint extender": {
+                                "quantity": 1
+                            }
+                        }
+                    },
+                    "result": {
+                        "defaultLandings": {
+                            "internet": 1
+                        }
+                    }
+                },
+                {
+                    "desc": "Go back home",
+                    "narrSays": "You decide to go back home",
+                    "transition": "toHome"
+                }
+            ]
+        },
+        {
+            "prompt": "You are now connected to the internet and can shop online! In the Republic of Jooduh, there are only 2 sites people use, Amazon.com.au and Amazon.com.\nUsage: `!buy https://www.amazon.com/iCarly-Season-3-Miranda-Cosgrove/dp/B0054JELWU/`",
+            "options": [
+                {
+                    "desc": "Go back home",
+                    "narrSays": "You decide to go back home",
+                    "transition": "toHome"
+                }
+            ]
+        }
+    ]
+}

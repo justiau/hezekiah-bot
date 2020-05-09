@@ -15,7 +15,7 @@ async function getItem(url) {
     let item = await axios.get(targetUrl, {headers: { 'User-Agent': 'Mozilla/5.0'}})
     .then(res => {
         const $ = cheerio.load(res.data);
-        let rtn = {error:false}
+        let rtn = {}
         rtn.name = $('#productTitle').text().trim();
         rtn.category = $('.a-unordered-list.a-horizontal.a-size-small > li:first-child').text().trim();
         rtn.product = $('.a-unordered-list.a-horizontal.a-size-small > li:last-child').text().trim();

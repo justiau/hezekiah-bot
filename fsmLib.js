@@ -4,26 +4,31 @@ var util = require('./util');
 module.exports.methods = {
 	onEnterState: function(lifecycle) {
 		let stateDict = fsmStates.states[this.act][this.state];
-		if (stateDict !== undefined) {
-            this.mode = stateDict.type;
-            switch (this.mode) {
-                case "dialogue":
-                    this.interactions = stateDict.dialogue;
-                    break;
-                case "quiz":
-                    this.interactions = stateDict.quiz;
-                    this.quizState = stateDict.postQuiz;
-                    this.quizState.correct = 0;
-                    break;
-                case "info":
-                    this.interactions = stateDict.text
-                    break;
-            }
-			this.updateOptions();
-			this.sendPrompt();
-			this.sendShop();
-			this.sendOptions();
+		if (stateDict === undefined) return;
+		this.mode = stateDict.type;
+		switch (this.mode) {
+			case "dialogue":
+				this.interactions = stateDict.dialogue;
+				break;
+			case "quiz":
+				this.interactions = stateDict.quiz;
+				this.quizState = stateDict.postQuiz;
+				this.quizState.correct = 0;
+				break;
+			case "info":
+				this.interactions = stateDict.text;
+				break;
+			case "spam":
+				this.interactions = stateDict.text;
+				this.spamState = stateDict.spamState;
+				this.spamState.count = 0;
+				break;
 		}
+		this.updateOptions();
+		this.sendPrompt();
+		this.sendShop();
+		this.sendOptions();
+		this.sendSpam(stateDict.name);
 	},
 	onStart: function(lifecyle) {
 		this.budget = this.default.budget;
@@ -75,6 +80,11 @@ module.exports.methods = {
 						this.rmItem(takeItem)
 					});
 				}
+				if ("giveItems" in choice.result) {
+					choice.result.giveItems.forEach(giveItem => {
+						this.addItem(giveItem)
+					})
+				}
 				if ("status" in choice.result) {
 					this.updateStatus(choice.result.status);
 				}
@@ -97,7 +107,7 @@ module.exports.methods = {
 		}
 	},
 	sendPrompt: function() {
-        let section = this.interactions[this.index];
+		let section = this.interactions[this.index];
 		let prompt;
 		let title = "";
         switch (this.mode) {
@@ -110,7 +120,10 @@ module.exports.methods = {
                 break;
             case "info":
                 prompt = section;
-                break;
+				break;
+			case "spam":
+				prompt = section;
+				break;
         }
 		util.sendEmbed(prompt, this.channel,title);
 	},
@@ -128,17 +141,17 @@ module.exports.methods = {
 					util.sendEmbed("",this.channel,"Question Timeout",[{name: "Correct Answer", value: answer}]);
 					this.next();
 				}
-			}, 15000);
+			}, 25000);
 		} else if (this.mode == "dialogue") {
 			this.options.forEach((option,index) => {
 				let descVal = ("userSays" in option) ? "\"" + option.userSays + "\"": option.desc;
 				if ("cost" in option) descVal += "\n**(Cost: $"+option.cost +")**";
-				fields.push({"name":String.fromCharCode(97 + parseInt(index)),"value":descVal})
+				fields.push({"name":"**"+String.fromCharCode(97 + parseInt(index))+"**","value":descVal})
 			})
 		}
 		else if (this.mode == "info") return;
+		else if (this.mode == "spam") return;
 		if (this.options !== undefined && this.options.length > 0) {
-			console.log(this.options);
 			util.sendEmbed("Please choose an option below.\nFor example, to choose **Option A** please type: `!choose a`",this.channel,"",fields)
 		}
 	},
@@ -171,6 +184,21 @@ module.exports.methods = {
 	},
 	sendBudget: function() {
 		util.sendEmbed("", this.channel, "Budget", [{name: 'Current Budget', value:"$" + this.budget}]);
+	},
+	sendSpam: function(spamName) {
+		if (this.mode == "spam") util.sendEmbed(spamName + " is about to begin. \nYou will be given " + (this.spamState.timer / 1000) + " seconds in which you have to type and send: `!" + this.spamState.keyword + "` as many times as you can. You will win the " + spamName + " if you type the command enough times.\nWhen you are ready to begin, type `!begin`", this.channel, "**"+spamName.toUpperCase()+" "+spamName.toUpperCase()+" "+spamName.toUpperCase()+"**");
+	},
+	startSpam: function() {
+		setTimeout(() => {
+			util.sendEmbed("The " + this.spamState.name + " is over!", this.channel)
+			if (this.spamState.count < this.spamState.required) {
+				util.sendEmbed("",this.channel,"You lost the " + this.spamState.name,{name: this.spamState.keyword + "s sent", value: this.spamState.count})
+				this[this.spamState.onFail.transition](this.spamState.onFail.landing || 0);
+			} else {
+				util.sendEmbed("",this.channel,"You won the " + this.spamState.name,{name: this.spamState.keyword + "s sent", value: this.spamState.count})
+				this[this.spamState.onSuccess.transition](this.spamState.onSuccess.landing || 0);
+			}
+		}, this.spamState.timer);
 	},
 	getShopItem: function(queryItemName) {
 		if (queryItemName in this.shop) {
@@ -253,7 +281,9 @@ module.exports.methods = {
 									let condItem = option.cond.items[itemKey]
 									itemKey = itemKey.toLowerCase();
 									let condTrue = (itemKey in this.items && (this.items[itemKey].quantity >= condItem.quantity))
-									if (!condTrue) return;
+									if (!condTrue) {
+										return;
+									}
 								}
 								break condSwitch;
 							case 'status':
@@ -262,9 +292,23 @@ module.exports.methods = {
 									let statusBl = option.cond.status[statusKey]
 									let condTrue = 	((statusKey in this.status && (this.status[statusKey] == statusBl))
 													|| (!(statusKey in this.status) && !statusBl));
-									if (!condTrue) return;
+									if (!condTrue) {
+										return;
+									}
 								}
 								break condSwitch;
+							case 'product':
+								for (var itemKey in this.items) {
+									let item = this.items[itemKey];
+									if ("product" in item) {
+										for (var i=0; i < option.cond.product.length; i++) {
+											if (item.product.toLowerCase().includes(option.cond.product[i])) {
+												break condSwitch;
+											}
+										}
+									}
+								}
+								return;
 						}
 					}
 				}

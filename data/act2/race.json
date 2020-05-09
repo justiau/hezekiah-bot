@@ -1,0 +1,21 @@
+{
+    "name": "race",
+    "type": "spam",
+    "text": [
+        "Jared replies, \"Great! I'll race you there!\"\n**GET READY, YOU'RE ABOUT TO RACE JARRED**"
+    ],
+    "spamState": {
+        "name": "race",
+        "keyword": "run",
+        "required": 30,
+        "timer": 7500,
+        "onSuccess": {
+            "transition": "toPostRace",
+            "landing": 0
+        },
+        "onFail": {
+            "transition": "toPostRace",
+            "landing": 1
+        }
+    }
+}

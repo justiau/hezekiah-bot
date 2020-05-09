@@ -46,7 +46,7 @@
     "postQuiz": {
         "transition": "toShop",
         "result": {
-            "eachcorrect": 100
+            "eachCorrect": 100
         },
         "text": "After answering their questions, the reporters disperse. They have given you $100 for each question you answered correctly."
     }

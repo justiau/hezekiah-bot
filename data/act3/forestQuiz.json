@@ -1,0 +1,64 @@
+{
+    "name": "forestQuiz",
+    "type": "quiz",
+    "quiz": [
+        {
+            "question": "After how many days is Hezekiah supposed to go to the Temple of the Lord",
+            "options": [
+                "On the 5th day",
+                "On the 6th day",
+                "On the 2nd day",
+                "On the 3rd day"
+            ],
+            "answer": "On the 3rd day"
+        },
+        {
+            "question": "What did Isaiah prepare for Hezekiah?",
+            "options": [
+                "A bowl of soup",
+                "A poultice of chips",
+                "A poultice of rice",
+                "A poultice of figs"
+            ],
+            "answer": "A poultice of figs"
+        },
+        {
+            "question": "Where did the Lord come to Isaiah and tell him that Hezekiah will survive?",
+            "options": [
+                "The centre court",
+                "The throne room",
+                "The upper court",
+                "The middle court"
+            ],
+            "answer": "The middle court"
+        },
+        {
+            "question": "Who were the envoys sent from?",
+            "options": [
+                "King Sauron",
+                "King Baladan",
+                "King Ahaz",
+                "King Marduk-Baladan"
+            ],
+            "answer": "King Marduk-Baladan"
+        },
+        {
+            "question": "Who succeeded King Hezekiah to the throne?",
+            "options": [
+                "Eliakim",
+                "Manasseh",
+                "Ephraim",
+                "Josiah"
+            ],
+            "answer": "Manasseh"
+        }
+    ],
+    "postQuiz": {
+        "transition": "toForest",
+        "landing": 0,
+        "result": {
+            "eachIncorrect": -200
+        },
+        "text": "Satisfied that the Prime Minister of Jooduh knows his Biblical knowledge, the ranger lets you into the park."
+    }
+}
